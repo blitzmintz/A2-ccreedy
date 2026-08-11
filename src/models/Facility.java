@@ -5,12 +5,14 @@ public abstract class Facility implements Inspectable {
     private int id;
     private boolean underInspection;
     private String lastInspectionResult;
+    private String name;
 
 
-    public Facility (boolean underInspection, String lastInspectionResult) {
+    public Facility (boolean underInspection, String lastInspectionResult, String name) {
         this.id = ++maxId;
         this.underInspection = underInspection;
         this.lastInspectionResult = lastInspectionResult;
+        this.name = name;
     }
 
     @Override
@@ -29,6 +31,14 @@ public abstract class Facility implements Inspectable {
     @Override
     public void endInspection(boolean passResult) {
 
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getId() {
