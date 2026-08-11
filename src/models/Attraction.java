@@ -9,8 +9,8 @@ public abstract class Attraction {
     private String status;
     private int maxConcurrentVisitors;
     private Employee runBy;
-    private LinkedList<Visitor> visitorsWaiting;
-    private LinkedList<Visitor> visitorsVisited;
+    private LinkedList<Visitor> visitorsWaiting = new LinkedList<>();
+    private LinkedList<Visitor> visitorsVisited = new LinkedList<>();
 
     public Attraction (String name, int maxConcurrentVisitors, Employee runBy) {
         this.id = ++maxId;
@@ -80,18 +80,9 @@ public abstract class Attraction {
         return visitorsWaiting;
     }
 
-    public void setVisitorsWaiting(LinkedList<Visitor> visitorList) {
-        this.visitorsWaiting = visitorList;
-    }
-
     public LinkedList<Visitor> getVisitorsVisited() {
         return visitorsVisited;
     }
-
-    public void setVisitorsVisited(LinkedList<Visitor> visitorList) {
-        this.visitorsVisited = visitorList;
-    }
-
 
     public String getStatus() {
         return status;
@@ -108,5 +99,26 @@ public abstract class Attraction {
             default -> validatedStatus = "Closed"; // won't open the attraction if it is not expressly open
         }
         return validatedStatus;
+    }
+
+    private void addVisitorWaiting(Visitor visitorToAdd) {
+        visitorsWaiting.addLast(visitorToAdd);
+        System.out.println("Visitor ID " + getId() + "added to attraction queue.");
+    }
+
+    //having number to remove allows us to pass in the max concurrent visitors easily and loop through until we reach an empty list OR max vistiors have been retrieved
+    private void removeNextVisitorsWaiting(int numberToRemove) {
+        int i;
+        for (i = 0; i == numberToRemove; i++) {
+            Visitor visitor = visitorsWaiting.peekFirst();
+            if (visitor != null) {
+                visitorsWaiting.removeFirst();
+                visitorsVisited.addLast(visitor);
+                System.out.println("Visitor ID " + getId() + " was removed from the queue and added to the visitor history list.");
+            }
+            else {
+                System.out.println("No more visitors waiting!");
+            }
+        }
     }
 }

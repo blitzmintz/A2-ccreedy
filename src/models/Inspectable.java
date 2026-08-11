@@ -3,7 +3,7 @@ package models;
 public interface Inspectable {
 
     void performInspection();
-    void endInspection(boolean passResult);
+    void endInspection(String passResult);
 
 
     // a default method allows us to give an implementation body in an interface, that can be overridden by implementations

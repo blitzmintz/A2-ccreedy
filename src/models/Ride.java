@@ -23,13 +23,16 @@ public class Ride extends Attraction implements Inspectable {
 
     @Override
     public void performInspection() {
-        this.underInspection = true;
+        setUnderInspection(true);
+        setStatus("Closed");
         System.out.println(getName() + " has been closed for an inspection.");
     }
 
     @Override
-    public void endInspection(boolean result) {
-        this.underInspection = false;
+    public void endInspection(String result) {
+        setUnderInspection(false);
+        setStatus("Open");
+        setLastInspectionResult(result);
         System.out.println(getName() + " is no longer under inspection. Inspection Passed?: " + result);
     }
 

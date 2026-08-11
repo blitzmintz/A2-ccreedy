@@ -28,11 +28,6 @@ public abstract class Facility implements Inspectable {
 
     }
 
-    @Override
-    public void endInspection(boolean passResult) {
-
-    }
-
     public String getName() {
         return this.name;
     }
@@ -50,7 +45,7 @@ public abstract class Facility implements Inspectable {
     }
 
     public void setLastInspectionResult(String lastInspectionResult) {
-        this.lastInspectionResult = lastInspectionResult;
+        this.lastInspectionResult = validateInspectionResult(lastInspectionResult);
     }
 
     public boolean isUnderInspection() {

@@ -26,8 +26,15 @@ public class Toilet extends Facility implements Inspectable {
 
     @Override
     public void performInspection() {
-        this.setUnderInspection(true);
+        setUnderInspection(true);
         System.out.println(this.getName() + " has been closed for an inspection.");
+    }
+
+    @Override
+    public void endInspection(String passResult) {
+        setUnderInspection(false);
+        setLastInspectionResult(passResult);
+        System.out.println(this.getName() + " is no longer under inspection. Inspection Passed?: " + this.getLastInspectionResult());
     }
 
     public boolean isHasChildFacilities() {
