@@ -19,7 +19,7 @@ public abstract class Attraction {
         this.runBy = runBy;
         this.visitorsWaiting = new LinkedList<>();
         this.visitorsVisited = new LinkedList<>();
-        this.status = "Open";
+        this.status = "Closed"; // default is to be closed, until expressly opened.
     }
 
     public Attraction (String name, int maxConcurrentVisitors, Employee runBy, String status) {
@@ -29,17 +29,23 @@ public abstract class Attraction {
         this.runBy = runBy;
         this.visitorsWaiting = new LinkedList<>();
         this.visitorsVisited = new LinkedList<>();
-        this.status = status;
+        this.status = validateStatus(status);
     }
 
     @Override
     public String toString() {
         return String.format("Ride ID: %d \n" +
                         "Name: %s \n" +
+                        "Status %s \n" +
                         "Maximum Visitors: %d \n" +
                         "Number of Visitors Waiting: %d \n" +
                         "Number of Visits: %d"
-                , this.getId(), this.getName(), this.getMaxConcurrentVisitors(), this.getVisitorsWaiting().size(), this.getVisitorsVisited().size());
+                , this.getId()
+                , this.getName()
+                , this.getStatus()
+                , this.getMaxConcurrentVisitors()
+                , this.getVisitorsWaiting().size()
+                , this.getVisitorsVisited().size());
     }
 
     public int getId() {
@@ -92,6 +98,15 @@ public abstract class Attraction {
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status = validateStatus(status);
+    }
+
+    private String validateStatus(String status) {
+        String validatedStatus = "";
+        switch (status.trim().toUpperCase()) {
+            case "OPEN", "OPENED", "AVAILABLE" -> validatedStatus = "Open";
+            default -> validatedStatus = "Closed"; // won't open the attraction if it is not expressly open
+        }
+        return validatedStatus;
     }
 }

@@ -1,11 +1,9 @@
 package models;
 
-import java.time.LocalDate;
 
 public class Ride extends Attraction implements Inspectable {
     public boolean underInspection;
-    public LocalDate lastInspectionDate;
-    public boolean lastInspectionResult;
+    public String lastInspectionResult;
 
     public Ride(String name, int maxConcurrentVisitors, Employee runBy) {
         super(name, maxConcurrentVisitors, runBy);
@@ -17,23 +15,10 @@ public class Ride extends Attraction implements Inspectable {
         this.underInspection = false;
     }
 
-    public Ride(String name, int maxConcurrentVisitors, Employee runBy, boolean underInspection, String status) {
+    public Ride(String name, int maxConcurrentVisitors, Employee runBy, boolean underInspection, String status, String lastInspectionResult) {
         super(name, maxConcurrentVisitors, runBy, status);
         this.underInspection = underInspection;
-    }
-
-    public Ride(String name, int maxConcurrentVisitors, Employee runBy, LocalDate lastInspectionDate, boolean lastInspectionResult) {
-        super(name, maxConcurrentVisitors, runBy);
-        this.underInspection = false;
-        this.lastInspectionDate = lastInspectionDate;
-        this.lastInspectionResult = lastInspectionResult;
-    }
-
-    public Ride(String name, int maxConcurrentVisitors, Employee runBy, boolean underInspection, LocalDate lastInspectionDate, boolean lastInspectionResult) {
-        super(name, maxConcurrentVisitors, runBy);
-        this.underInspection = underInspection;
-        this.lastInspectionDate = lastInspectionDate;
-        this.lastInspectionResult = lastInspectionResult;
+        this.lastInspectionResult = validateInspectionResult(lastInspectionResult);
     }
 
     @Override
@@ -70,15 +55,25 @@ public class Ride extends Attraction implements Inspectable {
                 , this.getMaxConcurrentVisitors()
                 , this.getVisitorsWaiting().size()
                 , this.getVisitorsVisited().size()
-                , this.getLastInspectionDate().toString()
                 , this.getLastInspectionResult());
     }
 
-    public LocalDate getLastInspectionDate() {
-        return lastInspectionDate;
+    public boolean isUnderInspection() {
+        return underInspection;
     }
 
-    public boolean getLastInspectionResult() {
+    public String getLastInspectionResult() {
         return lastInspectionResult;
     }
+
+    public void setUnderInspection(boolean underInspection) {
+        this.underInspection = underInspection;
+    }
+
+    public void setLastInspectionResult(String result) {
+        this.lastInspectionResult = validateInspectionResult(result);
+    }
+
+
+
 }
