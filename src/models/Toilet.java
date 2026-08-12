@@ -30,6 +30,19 @@ public class Toilet extends Facility implements Inspectable {
         this.hasDisabledFacilities = hasDisabledFacilities;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Toilet ID: %d \n" +
+                        "Name: %s \n" +
+                        "Status: %s \n" +
+                        "Has Child Facilities: %b \n" +
+                        "Has Disabled Facilities: %b \n"
+                , this.getId()
+                , this.getName()
+                , this.getStatus()
+                , this.isHasChildFacilities()
+                , this.isHasDisabledFacilities());
+    }
 
     @Override
     public boolean equals(Object o) {

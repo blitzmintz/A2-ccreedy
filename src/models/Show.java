@@ -25,14 +25,20 @@ public class Show extends Attraction {
     public String toString() {
         return String.format("Show ID: %d \n" +
                         "Show Name: %s \n" +
+                        "Stage Location Name: %s \n" +
+                        "Run By: %s \n" +
                         "Maximum Visitors: %d \n" +
                         "Number of Visitors Waiting: %d \n" +
-                        "Number of Visits: %d \n"
+                        "Number of Visits: %d \n" +
+                        "Status: %s \n"
                 , this.getId()
                 , this.getName()
+                , this.getStageLocationName()
+                , this.getRunByName()
                 , this.getMaxConcurrentVisitors()
                 , this.getVisitorsWaiting().size()
-                , this.getVisitorsVisited().size());
+                , this.getVisitorsVisited().size()
+                , this.getStatus());
     }
 
 

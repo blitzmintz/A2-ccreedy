@@ -1,5 +1,6 @@
 package models;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public abstract class Attraction {
@@ -55,6 +56,14 @@ public abstract class Attraction {
         return runBy;
     }
 
+    public String getRunByName() {
+        if (runBy == null) {
+            return "No operator assigned";
+        } else {
+            return runBy.getFullName();
+        }
+    }
+
     public void removeOperator() {
         this.runBy = null;
         //No operator means attraction must be closed
@@ -69,8 +78,44 @@ public abstract class Attraction {
         return visitorsWaiting;
     }
 
+    public String getVisitorsWaitingAsString() {
+        String visitorListOrdered = "";
+        for (Visitor visitor : visitorsWaiting) {
+            visitorListOrdered = visitorListOrdered + (visitorsWaiting.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+        }
+        return visitorListOrdered;
+    }
+
     public LinkedList<Visitor> getVisitorsVisited() {
         return visitorsVisited;
+    }
+
+    public String getVisitorsVisitedAsString() {
+        String visitorHistoryListOrdered = "";
+        for (Visitor visitor : visitorsVisited) {
+            visitorHistoryListOrdered = visitorHistoryListOrdered + (visitorsVisited.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+        }
+        return visitorHistoryListOrdered;
+    }
+
+    public String getVisitorsVisitedOrderByAge() {
+        LinkedList<Visitor> sortedByAgeList = new LinkedList<>(visitorsVisited);
+        sortedByAgeList.sort(Comparator.comparing(Visitor::getAge).thenComparing(Visitor::getId));
+        String orderedList = "";
+        for (Visitor visitor: sortedByAgeList) {
+            orderedList = orderedList + (sortedByAgeList.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " | Age: " + visitor.getAge() + " [ID " + visitor.getId() + "] \n";
+        }
+        return orderedList;
+    }
+
+    public String getVisitorsVisitedOrderByLastName() {
+        LinkedList<Visitor> sortedByLastNameList = new LinkedList<>(visitorsVisited);
+        sortedByLastNameList.sort(Comparator.comparing(Visitor::getLastName).thenComparing(Visitor::getId));
+        String orderedList = "";
+        for (Visitor visitor: sortedByLastNameList) {
+            orderedList = orderedList + (sortedByLastNameList.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+        }
+        return orderedList;
     }
 
     public String getStatus() {
@@ -90,20 +135,22 @@ public abstract class Attraction {
         return validatedStatus;
     }
 
-    private void addVisitorWaiting(Visitor visitorToAdd) {
+
+    //I think later when I need to have concurrency i am going to have to refactor this
+    public void addVisitorWaiting(Visitor visitorToAdd) {
         visitorsWaiting.addLast(visitorToAdd);
-        System.out.println("Visitor ID " + getId() + "added to attraction queue.");
+        System.out.println("Visitor ID " + visitorToAdd.getId() + " added to attraction queue.");
     }
 
-    //having number to remove allows us to pass in the max concurrent visitors easily and loop through until we reach an empty list OR max vistiors have been retrieved
-    private void removeNextVisitorsWaiting(int numberToRemove) {
+    //having number to remove allows us to pass in the max concurrent visitors easily and loop through until we reach an empty list OR max visitors have been retrieved
+    public void removeNextVisitorsWaiting(int numberToRemove) {
         int i;
-        for (i = 0; i == numberToRemove; i++) {
+        for (i = 0; i < Math.min(numberToRemove, maxConcurrentVisitors); i++) {
             Visitor visitor = visitorsWaiting.peekFirst();
             if (visitor != null) {
                 visitorsWaiting.removeFirst();
                 visitorsVisited.addLast(visitor);
-                System.out.println("Visitor ID " + getId() + " was removed from the queue and added to the visitor history list.");
+                System.out.println("Visitor ID " + visitor.getId() + " was removed from the queue and added to the visitor history list.");
             }
             else {
                 System.out.println("No more visitors waiting!");
