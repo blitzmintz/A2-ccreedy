@@ -2,14 +2,17 @@ package models;
 
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class Ride extends Attraction implements Inspectable {
     private boolean underInspection;
-    private LinkedList<Inspection> listOfInspections;
+    private LinkedList<Inspection> listOfInspections = new LinkedList<>();
 
-    public Ride(String name, int maxConcurrentVisitors, Employee runBy) {
+    public Ride(String name, int maxConcurrentVisitors) {
         super(name, maxConcurrentVisitors);
         this.underInspection = false;
+        // No employee running it, so cannot be open
+        this.setStatus("Closed");
     }
 
     public Ride(String name, int maxConcurrentVisitors, String status, Employee runBy) {
@@ -30,32 +33,20 @@ public class Ride extends Attraction implements Inspectable {
 
     @Override
     public void performInspection(Inspection inspection) {
+        this.addInspection(inspection);
         setUnderInspection(true);
         setStatus("Closed");
-        this.addInspection(inspection);
         System.out.println(getName() + " has been closed for an inspection.");
     }
 
     @Override
-    public void endInspection(String result) {
-        try {
-            if (listOfInspections.peekLast().getStatus().equals("In Progress")) {
-                listOfInspections.peekLast().setStatus("Complete");
-                setUnderInspection(false);
-                System.out.println(getName() + " is no longer under inspection. Inspection Passed?: " + listOfInspections.peekLast().getInspectionResult());
-                if (validateInspectionResult(result).equals("Pass")) {
-                    setStatus("Open");
-                    System.out.println(getName() + " is now open again!");
-                } else {
-                    System.out.println(getName() + " did not pass it's inspection and will remain closed.");
-                }
-            } else {
-                System.out.println("There is no inspection in progress to end.");
-            }
-
-        } catch (NullPointerException e) {
-            System.out.println("No inspections found, result cannot be displayed.");
+    public void endInspection(String passResult) {
+        setUnderInspection(false);
+        // If an inspection fails, noone should use the ride, so we keep it closed unless it passes
+        if (Objects.equals(validateInspectionResult(passResult), "Pass")) {
+            setStatus("Open");
         }
+        System.out.println(this.getName() + " is no longer under inspection. Inspection Result: " + this.getLastInspectionResult());
     }
 
     @Override
@@ -72,18 +63,20 @@ public class Ride extends Attraction implements Inspectable {
                 "Name: %s \n" +
                 "Maximum Visitors: %d \n" +
                 "Number of Visitors Waiting: %d \n" +
-                "Number of Visits: %d \n" +
-                "Inspection Result: %s"
+                "Number of Visits: %d \n"
                 , this.getId()
                 , this.getName()
                 , this.getMaxConcurrentVisitors()
                 , this.getVisitorsWaiting().size()
-                , this.getVisitorsVisited().size()
-                , this.getLastInspectionResult());
+                , this.getVisitorsVisited().size());
     }
 
     public boolean isUnderInspection() {
         return underInspection;
+    }
+
+    public LinkedList<Inspection> getListOfInspections() {
+        return listOfInspections;
     }
 
     public String getLastInspectionResult() {

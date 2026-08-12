@@ -61,23 +61,60 @@ public class AssignmentTwo {
         employeeSet.add(inspector2);
 
         //PART 2 - ATTRACTIONS
-        //Create a ride
-        Ride crazyCoasterRide = new Ride("Crazy Coaster 3000", 20, false, "Open", firstEmployee);
-
-        // add performers to a list to be passed to Show constructor - a show typically has many performers. one of them is running the show.
+        // Create a show
+        // Add performers to a list to be passed to Show constructor - a show typically has many performers. one of them is running the show.
         ArrayList<Employee> performerList1 = new ArrayList<>();
         performerList1.add(performerEmployee4);
         performerList1.add(performerEmployee2);
 
-        // Create a show
         Show fairyPerformance = new Show("Fairy Fun Frenzy", 15, performerList1, "Open", "East Stage", performerEmployee4);
+
+        //Create a ride
+        Ride crazyCoasterRide = new Ride("Crazy Coaster 3000", 20, false, "Open", firstEmployee);
+        System.out.println(crazyCoasterRide);
+        // Create a ride that doesn't have an operator, and see that the status is defaulted to closed
+        Ride logFlumeRide = new Ride("Log Flume", 10);
+        System.out.println(logFlumeRide);
 
         // Create a toilet
         Toilet basicToilet = new Toilet("West Toilet", true, true);
 
-        // create an inspection that is in progress
-        Inspection toiletInspection = new Inspection(LocalDateTime.now(), inspector1, basicToilet);
-        System.out.println(toiletInspection);
+        // create an inspection that is in progress and start it
+        Inspection toiletInspection = new Inspection(LocalDate.now(), inspector1, basicToilet);
+        basicToilet.performInspection(toiletInspection);
+
+        // Show the most recently added (i.e. most recently started) inspection
+        System.out.println("\n" + basicToilet.getListOfInspections().getLast() + "\n");
+        //Show the toilet status during inspection
+        System.out.println("Toilet status during inspection: " + basicToilet.getStatus() + "\n");
+
+        // End the inspection with a pass result
+        toiletInspection.finishInspection("Pass");
+        basicToilet.endInspection(toiletInspection.getInspectionResult());
+        //Show the toilet status POST inspection
+        System.out.println("Toilet status after inspection: " + basicToilet.getStatus() + "\n");
+
+
+        // Show that the inspection status is now Complete after it was finished, and that the result was recorded.
+        // Note that I am accessing this via the toilet object not the inspection object, showing the same object is being updated
+        System.out.println(basicToilet.getListOfInspections().getLast() + "\n");
+
+        // Now we will inspect a ride
+        Inspection rideInspection = new Inspection(LocalDate.now(), inspector2, crazyCoasterRide);
+        crazyCoasterRide.performInspection(rideInspection);
+
+        // Show the most recently added (i.e. most recently started) inspection
+        System.out.println("\n" + crazyCoasterRide.getListOfInspections().getLast() + "\n");
+        //Show the ride status during inspection
+        System.out.println("Ride status during inspection: " + crazyCoasterRide.getStatus() + "\n");
+        rideInspection.finishInspection("Fail");
+        crazyCoasterRide.endInspection(rideInspection.getInspectionResult());
+        System.out.println("Ride status after inspection failed: " + crazyCoasterRide.getStatus() + "\n");
+
+        // Show that the inspection status is now Complete after it was finished, and that the result was recorded.
+        System.out.println(crazyCoasterRide.getListOfInspections().getLast() + "\n");
+
+
 
 
         //PART 3 - WAITING LINE

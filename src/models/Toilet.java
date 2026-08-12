@@ -41,6 +41,8 @@ public class Toilet extends Facility implements Inspectable {
 
     @Override
     public void performInspection(Inspection inspection) {
+        this.addInspection(inspection);
+        this.setStatus("Closed");
         setUnderInspection(true);
         System.out.println(this.getName() + " has been closed for an inspection.");
     }
@@ -48,7 +50,10 @@ public class Toilet extends Facility implements Inspectable {
     @Override
     public void endInspection(String passResult) {
         setUnderInspection(false);
-        System.out.println(this.getName() + " is no longer under inspection. Inspection Passed?: " + this.getLastInspectionResult());
+        if (validateInspectionResult(passResult) == "Pass") {
+            setStatus("Open");
+        }
+        System.out.println(this.getName() + " is no longer under inspection. Inspection Result: " + this.getLastInspectionResult());
     }
 
     @Override

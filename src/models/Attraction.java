@@ -55,6 +55,12 @@ public abstract class Attraction {
         return runBy;
     }
 
+    public void removeOperator() {
+        this.runBy = null;
+        //No operator means attraction must be closed
+        this.status = "Closed";
+    }
+
     public void setRunBy(Employee runBy) {
         this.runBy = runBy;
     }

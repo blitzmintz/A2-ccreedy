@@ -1,35 +1,35 @@
 package models;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Inspection {
     private static int maxId = 0;
     private int id;
-    private LocalDateTime inspectionDateTime;
+    private LocalDate inspectionDate;
     private Employee inspectedBy;
     private String status;
     private String inspectionResult;
     private Inspectable inspectedObject;
 
-    public Inspection(LocalDateTime inspectionDateTime, Employee inspectedBy, Inspectable inspectedObject) {
+    public Inspection(LocalDate inspectionDate, Employee inspectedBy, Inspectable inspectedObject) {
         this.id = ++maxId;
-        this.inspectionDateTime = inspectionDateTime;
+        this.inspectionDate = inspectionDate;
         this.inspectedBy = inspectedBy;
         this.inspectedObject = inspectedObject;
         this.status = "In Progress";
     }
 
-    public Inspection(LocalDateTime inspectionDateTime, Employee inspectedBy, String status, Inspectable inspectedObject) {
+    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, Inspectable inspectedObject) {
         this.id = ++maxId;
-        this.inspectionDateTime = inspectionDateTime;
+        this.inspectionDate = inspectionDate;
         this.inspectedBy = inspectedBy;
         this.status = status;
         this.inspectedObject = inspectedObject;
     }
 
-    public Inspection(LocalDateTime inspectionDateTime, Employee inspectedBy, String status, String inspectionResult, Inspectable inspectedObject) {
+    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, String inspectionResult, Inspectable inspectedObject) {
         this.id = ++maxId;
-        this.inspectionDateTime = inspectionDateTime;
+        this.inspectionDate = inspectionDate;
         this.inspectedBy = inspectedBy;
         this.status = status;
         this.inspectionResult = inspectionResult;
@@ -41,11 +41,15 @@ public class Inspection {
         return String.format("Inspection ID: %d\n" +
                 "Inspector: %s\n" +
                 "Inspection Date: %s\n" +
-                "What was inspected: %s\n"
+                "Inspected Object: %s\n" +
+                "Status: %s\n" +
+                "Result: %s"
                 , this.id
                 , this.inspectedBy.getFullName()
-                , this.inspectionDateTime.toString()
+                , this.inspectionDate.toString()
                 , this.getInspectedObjectName()
+                , this.getStatus()
+                , this.inspectionResult != null ? this.inspectionResult : "Not Yet Recorded"
                 );
     }
 
@@ -61,12 +65,12 @@ public class Inspection {
         return id;
     }
 
-    public LocalDateTime getInspectionDateTime() {
-        return inspectionDateTime;
+    public LocalDate getInspectionDateTime() {
+        return inspectionDate;
     }
 
-    public void setInspectionDateTime(LocalDateTime inspectionDateTime) {
-        this.inspectionDateTime = inspectionDateTime;
+    public void setInspectionDateTime(LocalDate inspectionDateTime) {
+        this.inspectionDate = inspectionDate;
     }
 
     public Employee getInspectedBy() {
@@ -103,5 +107,10 @@ public class Inspection {
 
     public void setInspectedObject(Inspectable inspectedObject) {
         this.inspectedObject = inspectedObject;
+    }
+
+    public void finishInspection(String passResult) {
+        this.setInspectionResult(passResult);
+        this.setStatus("Complete");
     }
 }
