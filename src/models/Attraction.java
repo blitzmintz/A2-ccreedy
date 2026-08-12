@@ -7,45 +7,28 @@ public abstract class Attraction {
     private int id;
     private String name;
     private String status;
-    private int maxConcurrentVisitors;
     private Employee runBy;
+    private int maxConcurrentVisitors;
     private LinkedList<Visitor> visitorsWaiting = new LinkedList<>();
     private LinkedList<Visitor> visitorsVisited = new LinkedList<>();
 
-    public Attraction (String name, int maxConcurrentVisitors, Employee runBy) {
+    public Attraction (String name, int maxConcurrentVisitors) {
         this.id = ++maxId;
         this.name = name;
         this.maxConcurrentVisitors = maxConcurrentVisitors;
-        this.runBy = runBy;
         this.visitorsWaiting = new LinkedList<>();
         this.visitorsVisited = new LinkedList<>();
         this.status = "Closed"; // default is to be closed, until expressly opened.
     }
 
-    public Attraction (String name, int maxConcurrentVisitors, Employee runBy, String status) {
+    public Attraction (String name, int maxConcurrentVisitors, String status, Employee runBy) {
         this.id = ++maxId;
         this.name = name;
         this.maxConcurrentVisitors = maxConcurrentVisitors;
-        this.runBy = runBy;
         this.visitorsWaiting = new LinkedList<>();
         this.visitorsVisited = new LinkedList<>();
         this.status = validateStatus(status);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Ride ID: %d \n" +
-                        "Name: %s \n" +
-                        "Status %s \n" +
-                        "Maximum Visitors: %d \n" +
-                        "Number of Visitors Waiting: %d \n" +
-                        "Number of Visits: %d"
-                , this.getId()
-                , this.getName()
-                , this.getStatus()
-                , this.getMaxConcurrentVisitors()
-                , this.getVisitorsWaiting().size()
-                , this.getVisitorsVisited().size());
+        this.runBy = runBy;
     }
 
     public int getId() {

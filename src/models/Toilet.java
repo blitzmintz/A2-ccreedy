@@ -5,16 +5,31 @@ public class Toilet extends Facility implements Inspectable {
     private boolean hasChildFacilities;
     private boolean hasDisabledFacilities;
 
-
-    public Toilet(boolean underInspection, String lastInspectionResult, String name) {
-        super(underInspection, lastInspectionResult, name);
+    public Toilet(String name) {
+        super(false, name);
     }
 
-    public Toilet(boolean underInspection, String lastInspectionResult, String name, boolean hasChildFacilities, boolean hasDisabledFacilities) {
-        super(underInspection, lastInspectionResult, name);
+    public Toilet(boolean underInspection, String name) {
+        super(underInspection, name);
+    }
+
+    public Toilet(boolean underInspection, String name, String status) {
+        super(underInspection, name, status);
+    }
+
+    public Toilet(String name, boolean hasChildFacilities, boolean hasDisabledFacilities) {
+        super(false, name);
         this.hasChildFacilities = hasChildFacilities;
         this.hasDisabledFacilities = hasDisabledFacilities;
     }
+
+
+    public Toilet(boolean underInspection, String name, boolean hasChildFacilities, boolean hasDisabledFacilities, String status) {
+        super(underInspection, name, status);
+        this.hasChildFacilities = hasChildFacilities;
+        this.hasDisabledFacilities = hasDisabledFacilities;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -25,7 +40,7 @@ public class Toilet extends Facility implements Inspectable {
     }
 
     @Override
-    public void performInspection() {
+    public void performInspection(Inspection inspection) {
         setUnderInspection(true);
         System.out.println(this.getName() + " has been closed for an inspection.");
     }
@@ -33,8 +48,27 @@ public class Toilet extends Facility implements Inspectable {
     @Override
     public void endInspection(String passResult) {
         setUnderInspection(false);
-        setLastInspectionResult(passResult);
         System.out.println(this.getName() + " is no longer under inspection. Inspection Passed?: " + this.getLastInspectionResult());
+    }
+
+    @Override
+    public String getLastInspectedByName() {
+        try {
+            return getListOfInspections().peekLast().getInspectedBy().getFullName();
+        } catch (NullPointerException e) {
+            System.out.println("There is no employee name against the last inspection for this toilet!");
+        }
+        return "Unknown";
+    }
+
+    @Override
+    public Employee getLastInspectedByObject() {
+        try {
+            return getListOfInspections().peekLast().getInspectedBy();
+        } catch (NullPointerException e) {
+            System.out.println("There is no employee against the last inspection for this toilet!");
+        }
+        return null;
     }
 
     public boolean isHasChildFacilities() {

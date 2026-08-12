@@ -1,16 +1,38 @@
 package models;
 
+import java.util.ArrayList;
+
 public class Show extends Attraction {
-
-    private String showName;
     private String stageLocationName;
+    private ArrayList<Employee> performers = new ArrayList<>();
 
-    public Show(String name, int maxConcurrentVisitors, Employee runBy) {
-        super(name, maxConcurrentVisitors, runBy);
+    public Show(String name, int maxConcurrentVisitors) {
+        super(name, maxConcurrentVisitors);
+    }
+    public Show(String name, int maxConcurrentVisitors, ArrayList<Employee> performerList, String status, Employee runBy) {
+        super(name, maxConcurrentVisitors, status, runBy);
+        this.performers = performerList;
+
+    }
+    public Show(String name, int maxConcurrentVisitors, ArrayList<Employee> performerList, String status, String stageLocationName, Employee runBy) {
+        super(name, maxConcurrentVisitors, status, runBy);
+        this.stageLocationName = stageLocationName;
+        this.performers = performerList;
     }
 
-    public Show(String name, int maxConcurrentVisitors, Employee runBy, String status) {
-        super(name, maxConcurrentVisitors, runBy, status);
+
+    @Override
+    public String toString() {
+        return String.format("Show ID: %d \n" +
+                        "Show Name: %s \n" +
+                        "Maximum Visitors: %d \n" +
+                        "Number of Visitors Waiting: %d \n" +
+                        "Number of Visits: %d \n"
+                , this.getId()
+                , this.getName()
+                , this.getMaxConcurrentVisitors()
+                , this.getVisitorsWaiting().size()
+                , this.getVisitorsVisited().size());
     }
 
 
@@ -22,19 +44,20 @@ public class Show extends Attraction {
         return this.getId() == other.getId();
     }
 
-    public void setShowName(String showName) {
-        this.showName = showName;
-    }
-
     public void setStageLocationName(String stageLocationName) {
         this.stageLocationName = stageLocationName;
-    }
-
-    public String getShowName() {
-        return showName;
     }
 
     public String getStageLocationName() {
         return stageLocationName;
     }
+
+    public ArrayList<Employee> getPerformerList() {
+        return performers;
+    }
+
+    public void setPerformers(ArrayList<Employee> performerList) {
+        this.performers = performerList;
+    }
+
 }

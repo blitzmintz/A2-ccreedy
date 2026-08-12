@@ -1,17 +1,26 @@
 package models;
 
+import java.util.LinkedList;
+
 public abstract class Facility implements Inspectable {
     private static int maxId = 0;
     private int id;
-    private boolean underInspection;
-    private String lastInspectionResult;
     private String name;
+    private String status;
+    private boolean underInspection;
+    private LinkedList<Inspection> listOfInspections = new LinkedList<>();
 
 
-    public Facility (boolean underInspection, String lastInspectionResult, String name) {
+    public Facility(boolean underInspection, String name) {
         this.id = ++maxId;
         this.underInspection = underInspection;
-        this.lastInspectionResult = lastInspectionResult;
+        this.name = name;
+        this.status = "Closed"; // default to closed if we don't know
+    }
+    public Facility(boolean underInspection, String name, String status) {
+        this.id = ++maxId;
+        this.status = validateStatus(status);
+        this.underInspection = underInspection;
         this.name = name;
     }
 
@@ -24,8 +33,14 @@ public abstract class Facility implements Inspectable {
     }
 
     @Override
-    public void performInspection() {
+    public void performInspection(Inspection inspection) {
+        this.underInspection = true;
+        System.out.println("Facility ID " + this.getId() + " is under inspection.");
+        this.addInspection(inspection);
+    }
 
+    public LinkedList<Inspection> getListOfInspections() {
+        return listOfInspections;
     }
 
     public String getName() {
@@ -41,11 +56,12 @@ public abstract class Facility implements Inspectable {
     }
 
     public String getLastInspectionResult() {
-        return lastInspectionResult;
-    }
-
-    public void setLastInspectionResult(String lastInspectionResult) {
-        this.lastInspectionResult = validateInspectionResult(lastInspectionResult);
+        try {
+            return listOfInspections.peekLast().getInspectionResult();
+        } catch (NullPointerException e) {
+            System.out.println("There is no inspection history for this ride!");
+        }
+        return "Unknown";
     }
 
     public boolean isUnderInspection() {
@@ -55,4 +71,40 @@ public abstract class Facility implements Inspectable {
     public void setUnderInspection(boolean underInspection) {
         this.underInspection = underInspection;
     }
+
+    @Override
+    public String getLastInspectedByName() {
+        try {
+            return listOfInspections.peekLast().getInspectedBy().getFullName();
+        } catch (NullPointerException e) {
+            System.out.println("There is no inspection history for this ride!");
+        }
+        return "Unknown";
+    }
+
+    @Override
+    public void addInspection(Inspection inspection) {
+        listOfInspections.addLast(inspection);
+        System.out.println("Inspection " + inspection.getId() + " added to list.");
+    }
+
+    public void setStatus(String status) {
+        this.status = validateStatus(status);
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    private String validateStatus(String status) {
+        String validatedStatus = "";
+        switch (status.trim().toUpperCase()) {
+            case "OPEN", "OPENED", "AVAILABLE" -> validatedStatus = "Open";
+            default -> validatedStatus = "Closed"; // won't open the attraction if it is not expressly open
+        }
+        return validatedStatus;
+    }
+
 }
+
+

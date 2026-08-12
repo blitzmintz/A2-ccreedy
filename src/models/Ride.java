@@ -1,39 +1,61 @@
 package models;
 
 
+import java.util.LinkedList;
+
 public class Ride extends Attraction implements Inspectable {
-    public boolean underInspection;
-    public String lastInspectionResult;
+    private boolean underInspection;
+    private LinkedList<Inspection> listOfInspections;
 
     public Ride(String name, int maxConcurrentVisitors, Employee runBy) {
-        super(name, maxConcurrentVisitors, runBy);
+        super(name, maxConcurrentVisitors);
         this.underInspection = false;
     }
 
-    public Ride(String name, int maxConcurrentVisitors, Employee runBy, String status) {
-        super(name, maxConcurrentVisitors, runBy, status);
+    public Ride(String name, int maxConcurrentVisitors, String status, Employee runBy) {
+        super(name, maxConcurrentVisitors, status, runBy);
         this.underInspection = false;
     }
 
-    public Ride(String name, int maxConcurrentVisitors, Employee runBy, boolean underInspection, String status, String lastInspectionResult) {
-        super(name, maxConcurrentVisitors, runBy, status);
+    public Ride(String name, int maxConcurrentVisitors, boolean underInspection, String status, Employee runBy) {
+        super(name, maxConcurrentVisitors, status, runBy);
         this.underInspection = underInspection;
-        this.lastInspectionResult = validateInspectionResult(lastInspectionResult);
     }
 
     @Override
-    public void performInspection() {
+    public void addInspection(Inspection inspection) {
+        listOfInspections.addLast(inspection);
+        System.out.println("Inspection " + inspection.getId() + " added to list.");
+    }
+
+    @Override
+    public void performInspection(Inspection inspection) {
         setUnderInspection(true);
         setStatus("Closed");
+        this.addInspection(inspection);
         System.out.println(getName() + " has been closed for an inspection.");
     }
 
     @Override
     public void endInspection(String result) {
-        setUnderInspection(false);
-        setStatus("Open");
-        setLastInspectionResult(result);
-        System.out.println(getName() + " is no longer under inspection. Inspection Passed?: " + result);
+        try {
+            if (listOfInspections.peekLast().getStatus().equals("In Progress")) {
+                listOfInspections.peekLast().setStatus("Complete");
+                setUnderInspection(false);
+                System.out.println(getName() + " is no longer under inspection. Inspection Passed?: " + listOfInspections.peekLast().getInspectionResult());
+                if (validateInspectionResult(result).equals("Pass")) {
+                    setStatus("Open");
+                    System.out.println(getName() + " is now open again!");
+                } else {
+                    System.out.println(getName() + " did not pass it's inspection and will remain closed.");
+                }
+            } else {
+                System.out.println("There is no inspection in progress to end.");
+            }
+
+        } catch (NullPointerException e) {
+            System.out.println("No inspections found, result cannot be displayed.");
+        }
     }
 
     @Override
@@ -51,7 +73,6 @@ public class Ride extends Attraction implements Inspectable {
                 "Maximum Visitors: %d \n" +
                 "Number of Visitors Waiting: %d \n" +
                 "Number of Visits: %d \n" +
-                "Last Inspection Date: %s \n" +
                 "Inspection Result: %s"
                 , this.getId()
                 , this.getName()
@@ -66,16 +87,39 @@ public class Ride extends Attraction implements Inspectable {
     }
 
     public String getLastInspectionResult() {
-        return lastInspectionResult;
+        try {
+            return listOfInspections.peekLast().getInspectionResult();
+        } catch (NullPointerException e) {
+            System.out.println("There is no inspection history for this ride!");
+        }
+        return "Unknown";
+    }
+
+    @Override
+    public String getLastInspectedByName() {
+        try {
+            return listOfInspections.peekLast().getInspectedBy().getFullName();
+        } catch (NullPointerException e) {
+            System.out.println("There is no employee name against the last inspection for this ride!");
+        }
+        return "Unknown";
+    }
+
+    @Override
+    public Employee getLastInspectedByObject() {
+        try {
+            return listOfInspections.peekLast().getInspectedBy();
+        } catch (NullPointerException e) {
+            System.out.println("There is no employee against the last inspection for this ride!");
+        }
+        return null;
     }
 
     public void setUnderInspection(boolean underInspection) {
         this.underInspection = underInspection;
     }
 
-    public void setLastInspectionResult(String result) {
-        this.lastInspectionResult = validateInspectionResult(result);
-    }
+
 
 
 
