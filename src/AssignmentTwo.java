@@ -1,3 +1,6 @@
+import exceptions.EmptyRideQueueException;
+import exceptions.MissingOperatorException;
+import exceptions.UnderInspectionException;
 import models.*;
 
 import java.time.LocalDate;
@@ -174,7 +177,111 @@ public class AssignmentTwo {
 
         System.out.println();
 
-        // PART 5 - OPERATING THE ATTRACTION
+        // PART 5 - OPERATING ATTRACTIONS
         System.out.println("PART 5 HERE \n" + "--------");
+        Visitor fifthVisitor = new Visitor("Karly", "McManus", 23, LocalDate.now(), "0400777911");
+        Visitor sixthVisitor = new Visitor("Amy", "Starkly", 24, LocalDate.now(), "0400996611");
+
+        System.out.println("Creating a new show with no operator.");
+        Show wizardShow = new Show("Wonderful Wizards", 5,performerList1, "Open", null);
+        wizardShow.addVisitorWaiting(firstVisitor);
+        wizardShow.addVisitorWaiting(secondVisitor);
+        wizardShow.addVisitorWaiting(thirdVisitor);
+        wizardShow.addVisitorWaiting(fourthVisitor);
+        wizardShow.addVisitorWaiting(fifthVisitor);
+        wizardShow.addVisitorWaiting(sixthVisitor);
+        System.out.println("Displaying visitors waiting and cycle count before cycle begins.");
+        System.out.println(wizardShow.getVisitorsWaitingAsString());
+        System.out.println("Cycle count: " + wizardShow.getNumberOfCycles());
+        System.out.println("Displaying visitor history before cycle begins:");
+        System.out.println(wizardShow.getVisitorsVisitedAsString());
+        System.out.println("Starting the cycle with no operator - expecting to throw exception.");
+        try {
+            wizardShow.runCycle();
+        } catch (MissingOperatorException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("Adding an operator to allow us to run the cycle.");
+        wizardShow.setRunBy(performerEmployee4);
+        System.out.println("Starting the cycle with an operator.");
+        try {
+            wizardShow.runCycle();
+        } catch (MissingOperatorException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("Printing visitor queue & cycle count after cycle - waiting queue should have 1 person still waiting.");
+        System.out.println(wizardShow.getVisitorsWaitingAsString());
+        System.out.println("Cycle count: " + wizardShow.getNumberOfCycles());
+        System.out.println("Displaying visitor history after cycle completes:");
+        System.out.println(wizardShow.getVisitorsVisitedAsString());
+        System.out.println("Running another cycle to empty the queue.");
+        try {
+            wizardShow.runCycle();
+        } catch (MissingOperatorException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("\nPrinting visitor queue & cycle count after cycle - waiting queue should have no one waiting.");
+        System.out.println(wizardShow.getVisitorsWaitingAsString());
+        System.out.println("Cycle count: " + wizardShow.getNumberOfCycles());
+
+        System.out.println("\nNow running a cycle with no one in queue - it's a show, so it should still go");
+        try {
+            wizardShow.runCycle();
+        } catch (MissingOperatorException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("\nPrinting visitor queue & cycle count after cycle - waiting queue should have no one waiting.");
+        System.out.println(wizardShow.getVisitorsWaitingAsString());
+        System.out.println("Cycle count: " + wizardShow.getNumberOfCycles());
+
+        System.out.println("\n Creating a new Ride that we will close for inspection.");
+        Ride logFlumeRide = new Ride("Log Flume", 6, "Open", firstEmployee);
+        logFlumeRide.addVisitorWaiting(thirdVisitor);
+        logFlumeRide.addVisitorWaiting(secondVisitor);
+        logFlumeRide.addVisitorWaiting(firstVisitor);
+        logFlumeRide.addVisitorWaiting(fourthVisitor);
+        logFlumeRide.addVisitorWaiting(sixthVisitor);
+        logFlumeRide.addVisitorWaiting(fifthVisitor);
+
+        Inspection flumeRideInspection = new Inspection(LocalDate.now(), inspector1, logFlumeRide);
+        logFlumeRide.performInspection(flumeRideInspection);
+
+        System.out.println("Displaying visitors waiting and cycle count before cycle begins.");
+        System.out.println(logFlumeRide.getVisitorsWaitingAsString());
+        System.out.println("Cycle count: " + logFlumeRide.getNumberOfCycles());
+        System.out.println("Displaying visitor history before cycle begins:");
+        System.out.println(logFlumeRide.getVisitorsVisitedAsString());
+        System.out.println("Starting the cycle while under inspection - expecting to throw exception.");
+        try {
+            logFlumeRide.runCycle();
+        } catch (EmptyRideQueueException | MissingOperatorException | UnderInspectionException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println("Ending the inspection as a pass to reopen the ride.");
+        logFlumeRide.endInspection("Pass");
+        System.out.println("Running a cycle again.");
+        try {
+            logFlumeRide.runCycle();
+        } catch (EmptyRideQueueException | MissingOperatorException | UnderInspectionException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("Printing visitor queue & cycle count after cycle - queue should have no one waiting.");
+        System.out.println(logFlumeRide.getVisitorsWaitingAsString());
+        System.out.println("Cycle count: " + logFlumeRide.getNumberOfCycles());
+        System.out.println("Displaying visitor history after cycle completes:");
+        System.out.println(logFlumeRide.getVisitorsVisitedAsString());
+
+        System.out.println("Running a cycle again with no one in the queue, expecting to throw empty queue exception");
+        try {
+            logFlumeRide.runCycle();
+        } catch (EmptyRideQueueException | MissingOperatorException | UnderInspectionException e) {
+            System.out.println(e.getMessage());
+        }
+
     }
+
 }

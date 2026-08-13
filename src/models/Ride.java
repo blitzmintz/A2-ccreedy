@@ -1,6 +1,10 @@
 package models;
 
 
+import exceptions.EmptyRideQueueException;
+import exceptions.MissingOperatorException;
+import exceptions.UnderInspectionException;
+
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -22,6 +26,11 @@ public class Ride extends Attraction implements Inspectable {
 
     public Ride(String name, int maxConcurrentVisitors, boolean underInspection, String status, Employee runBy) {
         super(name, maxConcurrentVisitors, status, runBy);
+        this.underInspection = underInspection;
+    }
+
+    public Ride(String name, int maxConcurrentVisitors, boolean underInspection, String status) {
+        super(name, maxConcurrentVisitors, status);
         this.underInspection = underInspection;
     }
 
@@ -110,6 +119,22 @@ public class Ride extends Attraction implements Inspectable {
 
     public void setUnderInspection(boolean underInspection) {
         this.underInspection = underInspection;
+    }
+
+    @Override
+    public void runCycle() throws MissingOperatorException, EmptyRideQueueException, UnderInspectionException {
+        if (getRunBy() == null) {
+            throw new MissingOperatorException("The Ride does not have an operator present, so it cannot start a cycle!");
+        }
+        if (getVisitorsWaiting().isEmpty()) {
+            throw new EmptyRideQueueException("The ride has no one waiting, so it cannot start a cycle!");
+        }
+        if (isUnderInspection()) {
+            throw new UnderInspectionException("The ride is under inspection, so it cannot start a cycle!");
+        }
+        int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
+        removeNextVisitorsWaiting(visitorsToServe);
+        addCycle();
     }
 
 

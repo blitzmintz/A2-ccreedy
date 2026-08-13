@@ -3,7 +3,7 @@ package models;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-public abstract class Attraction {
+public abstract class Attraction implements Cycleable {
     private static int maxId = 0;
     private int id;
     private String name;
@@ -12,6 +12,7 @@ public abstract class Attraction {
     private int maxConcurrentVisitors;
     private LinkedList<Visitor> visitorsWaiting = new LinkedList<>();
     private LinkedList<Visitor> visitorsVisited = new LinkedList<>();
+    private int numberOfCycles = 0;
 
     public Attraction (String name, int maxConcurrentVisitors) {
         this.id = ++maxId;
@@ -30,6 +31,12 @@ public abstract class Attraction {
         this.visitorsVisited = new LinkedList<>();
         this.status = validateStatus(status);
         this.runBy = runBy;
+    }
+
+    public Attraction(String name, int maxConcurrentVisitors, String status) {
+        this.name = name;
+        this.maxConcurrentVisitors = maxConcurrentVisitors;
+        this.status = validateStatus(status);
     }
 
     public int getId() {
@@ -80,10 +87,15 @@ public abstract class Attraction {
 
     public String getVisitorsWaitingAsString() {
         String visitorListOrdered = "";
-        for (Visitor visitor : visitorsWaiting) {
-            visitorListOrdered = visitorListOrdered + (visitorsWaiting.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+        if (visitorsWaiting.isEmpty()) {
+            visitorListOrdered = "There are no visitors waiting.";
+        } else {
+            for (Visitor visitor : visitorsWaiting) {
+                visitorListOrdered = visitorListOrdered + (visitorsWaiting.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+            }
         }
         return visitorListOrdered;
+
     }
 
     public LinkedList<Visitor> getVisitorsVisited() {
@@ -92,11 +104,16 @@ public abstract class Attraction {
 
     public String getVisitorsVisitedAsString() {
         String visitorHistoryListOrdered = "";
-        for (Visitor visitor : visitorsVisited) {
-            visitorHistoryListOrdered = visitorHistoryListOrdered + (visitorsVisited.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+        if (visitorsVisited.isEmpty()) {
+            visitorHistoryListOrdered = "There are no visits in the attraction history.";
+        } else {
+            for (Visitor visitor : visitorsVisited) {
+                visitorHistoryListOrdered = visitorHistoryListOrdered + (visitorsVisited.indexOf(visitor) + 1) + ". " + visitor.getFullName() + " [ID " + visitor.getId() + "]\n";
+            }
         }
         return visitorHistoryListOrdered;
     }
+
 
     public String getVisitorsVisitedOrderByAge() {
         LinkedList<Visitor> sortedByAgeList = new LinkedList<>(visitorsVisited);
@@ -145,7 +162,8 @@ public abstract class Attraction {
     //having number to remove allows us to pass in the max concurrent visitors easily and loop through until we reach an empty list OR max visitors have been retrieved
     public void removeNextVisitorsWaiting(int numberToRemove) {
         int i;
-        for (i = 0; i < Math.min(numberToRemove, maxConcurrentVisitors); i++) {
+        int queueSizeAtStart = visitorsWaiting.size();
+        for (i = 0; i < Math.min(numberToRemove, Math.min(maxConcurrentVisitors, queueSizeAtStart)); i++) {
             Visitor visitor = visitorsWaiting.peekFirst();
             if (visitor != null) {
                 visitorsWaiting.removeFirst();
@@ -156,5 +174,17 @@ public abstract class Attraction {
                 System.out.println("No more visitors waiting!");
             }
         }
+    }
+
+    public int getNumberOfCycles() {
+        return numberOfCycles;
+    }
+
+    public void setNumberOfCycles(int numberOfCycles) {
+        this.numberOfCycles = numberOfCycles;
+    }
+
+    public void addCycle() {
+        this.numberOfCycles = this.numberOfCycles + 1;
     }
 }

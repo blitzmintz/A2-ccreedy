@@ -1,5 +1,7 @@
 package models;
 
+import exceptions.MissingOperatorException;
+
 import java.util.ArrayList;
 
 public class Show extends Attraction {
@@ -9,6 +11,7 @@ public class Show extends Attraction {
     public Show(String name, int maxConcurrentVisitors) {
         super(name, maxConcurrentVisitors);
     }
+
     public Show(String name, int maxConcurrentVisitors, ArrayList<Employee> performerList, String status, Employee runBy) {
         super(name, maxConcurrentVisitors, status, runBy);
         this.performers = performerList;
@@ -64,6 +67,17 @@ public class Show extends Attraction {
 
     public void setPerformers(ArrayList<Employee> performerList) {
         this.performers = performerList;
+    }
+
+    @Override
+    public void runCycle() throws MissingOperatorException {
+        if (getRunBy() == null) {
+            throw new MissingOperatorException("The Show does not have an operator present, so it cannot start a cycle!");
+        }
+        int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
+        removeNextVisitorsWaiting(visitorsToServe);
+        addCycle();
+
     }
 
 }
