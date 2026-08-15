@@ -1,7 +1,5 @@
 package park;
 
-import java.util.Objects;
-
 public class Visitor {
 
     private int id;
@@ -19,6 +17,23 @@ public class Visitor {
         this.age = age;
         this.phoneNumber = phoneNumber;
     }
+
+    /**
+     * This constructor allows the id to be set directly rather than auto-incremented. Intended for use when restoring data from file.
+     * @param id the ID of the backed up visitor
+     * @param firstName the first name of the visitor
+     * @param lastName the last name of the visitor
+     * @param age the age of the visitor
+     * @param phoneNumber the phone number of the visitor
+     */
+    public Visitor (int id, String firstName, String lastName, int age, String phoneNumber) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.phoneNumber = phoneNumber;
+    }
+
     public Visitor (String firstName, int age, String phoneNumber) {
         this.id = ++maxId;
         this.firstName = firstName;
