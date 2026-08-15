@@ -1,12 +1,10 @@
 import park.*;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,17 +23,17 @@ public class BackupManager {
     }
 
     public void initiateParkBackup(ThemeParkManager themePark) throws IOException {
+        System.out.println("Initiating park backup - generating backup for visitors.");
         String visitorBackup = generateVisitorText(themePark.getVisitorMap());
+        System.out.println("Initiating park backup - generating backup for employees.");
         String employeeBackup = generateEmployeeText(themePark.getEmployeeMap());
+        System.out.println("Initiating park backup - generating backup for inspections.");
         String inspectionBackup = generateInspectionText(themePark.getInspectionMap());
+        System.out.println("Initiating park backup - generating backup for facilities.");
         String facilityBackup = generateFacilityText(themePark.getFacilityMap());
+        System.out.println("Initiating park backup - generating backup for attractions.");
         String attractionBackup = generateAttractionText(themePark.getAttractionMap());
-        System.out.println(visitorBackup);
-        System.out.println(employeeBackup);
-        System.out.println(facilityBackup);
-        System.out.println(inspectionBackup);
-        System.out.println(attractionBackup);
-        String themeParkName = themePark.getName();
+        String themeParkName = "THEME PARK NAME: " + themePark.getName();
         String backupText = String.join("\n", themeParkName, visitorBackup, employeeBackup, inspectionBackup, facilityBackup, attractionBackup);
         createParkBackup(backupText);
     }
@@ -49,6 +47,146 @@ public class BackupManager {
         } catch (IOException e) {
             throw new IOException("File could not be created:" + e);
         }
+
+    }
+
+    /**
+     * This method restores the park from a backed up file. It tracks what lines to ingest as real data (done where insideObjectBlock = true)
+     * and for header/footer lines it changes that state accordingly.
+     * @param fileName
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    public void initiateParkRestoreFromFile(File fileName) throws IOException, FileNotFoundException {
+        System.out.println("Starting the restore");
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            boolean insideObjectBlock = false;
+            List<String[]> currentObjectBlockLines = new ArrayList<>();
+            String parkName = bufferedReader.readLine();
+            String name = parkName.substring(parkName.lastIndexOf(": "));
+            System.out.println("Restoring theme park with the name: " + name);
+            ThemeParkManager themePark = createNewPark(name);
+
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                if (line.equals("***VISITORS***")) {
+                    insideObjectBlock = true;
+                    //this resets the array for the next block to start
+                    currentObjectBlockLines.clear();
+                    continue;
+                }
+
+                if (line.equals("***END-VISITORS***")) {
+                    if (insideObjectBlock) {
+                        insideObjectBlock = false;
+                        processVisitorBlock(currentObjectBlockLines,themePark);
+                    }
+                    //if insideObjectBlock is false, this means that there was no beginning to the block,
+                    // so there'll be nothing to process - so just keep going
+                    continue;
+                }
+
+                if (line.equals("***EMPLOYEES***")) {
+                    insideObjectBlock = true;
+                    currentObjectBlockLines.clear();
+                    continue;
+                }
+
+                if (line.equals("***END-EMPLOYEES***")) {
+                    if (insideObjectBlock) {
+                        insideObjectBlock = false;
+                        processEmployeeBlock(currentObjectBlockLines,themePark);
+                    }
+                    continue;
+                }
+                if (line.equals("***FACILITIES***")) {
+                    insideObjectBlock = true;
+                    currentObjectBlockLines.clear();
+                    continue;
+                }
+
+                if (line.equals("***END-FACILITIES***")) {
+                    if (insideObjectBlock) {
+                        insideObjectBlock = false;
+                        processFacilitiesBlock(currentObjectBlockLines,themePark);
+                    }
+                    continue;
+                }
+
+                if (line.equals("***INSPECTIONS***")) {
+                    insideObjectBlock = true;
+                    currentObjectBlockLines.clear();
+                    continue;
+                }
+
+                if (line.equals("***END-INSPECTIONS***")) {
+                    if (insideObjectBlock) {
+                        insideObjectBlock = false;
+                        processInspectionBlock(currentObjectBlockLines,themePark);
+                    }
+                    continue;
+                }
+                if (line.equals("***ATTRACTIONS***")) {
+                    insideObjectBlock = true;
+                    currentObjectBlockLines.clear();
+                    continue;
+                }
+
+                if (line.equals("***END-ATTRACTIONS***")) {
+                    if (insideObjectBlock) {
+                        insideObjectBlock = false;
+                        processAttractionsBlock(currentObjectBlockLines, themePark);
+                    }
+                    //if insideObjectBlock is false, this means that there was no beginning to the block,
+                    // so there'll be nothing to process - so just keep going
+                    continue;
+                }
+
+                if (insideObjectBlock) {
+                    // Splitting each line into an array that is split by the pipe delimiter used when generating the backup file
+                    // split() method documentation advises that a negative limit parameter will allow the split to happen as many times as the delimiter is found
+                    String[] objectLine = line.split("\\|", -1);
+                    currentObjectBlockLines.add(objectLine);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("File Not found: " + e);
+        } catch (IOException e) {
+            throw new IOException("IO Exception: " + e);
+        }
+    }
+
+    private ThemeParkManager createNewPark(String name) {
+        ThemeParkManager parkFromRestore = new ThemeParkManager(name);
+        System.out.println("New park successfully created.");
+        return parkFromRestore;
+    }
+
+    private void processVisitorBlock(List<String[]> visitors, ThemeParkManager themePark) {
+        for (String[] attribute : visitors) {
+            Visitor visitor = new Visitor(attribute[0], attribute[1], attribute[2], attribute[3], attribute[4]);
+            themePark.addVisitor(visitor);
+        }
+    }
+
+    private void processEmployeeBlock(List<String[]> employees, ThemeParkManager themePark) {
+
+    }
+
+    private void processInspectionBlock(List<String[]> inspections, ThemeParkManager themePark) {
+
+    }
+
+    private void processFacilitiesBlock(List<String[]> facilities, ThemeParkManager themePark) {
+
+    }
+
+    private void processAttractionsBlock(List<String[]> attractions, ThemeParkManager themePark) {
+
 
     }
 

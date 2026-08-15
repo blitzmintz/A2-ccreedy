@@ -20,17 +20,17 @@ public class Visitor {
 
     /**
      * This constructor allows the id to be set directly rather than auto-incremented. Intended for use when restoring data from file.
-     * @param id the ID of the backed up visitor
+     * @param id the ID of the backed up visitor, as a string.
      * @param firstName the first name of the visitor
      * @param lastName the last name of the visitor
-     * @param age the age of the visitor
+     * @param age the age of the visitor, as a string.
      * @param phoneNumber the phone number of the visitor
      */
-    public Visitor (int id, String firstName, String lastName, int age, String phoneNumber) {
-        this.id = id;
+    public Visitor (String id, String firstName, String lastName, String age, String phoneNumber) {
+        this.id = Integer.parseInt(id);
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
+        this.age = Integer.parseInt(age);
         this.phoneNumber = phoneNumber;
     }
 
