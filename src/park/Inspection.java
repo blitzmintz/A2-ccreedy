@@ -9,31 +9,31 @@ public class Inspection {
     private Employee inspectedBy;
     private String status;
     private String inspectionResult;
-    private Inspectable inspectedObject;
+    private String inspectedObjectName;
 
-    public Inspection(LocalDate inspectionDate, Employee inspectedBy, Inspectable inspectedObject) {
+    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String inspectedObjectName) {
         this.id = ++maxId;
         this.inspectionDate = inspectionDate;
         this.inspectedBy = inspectedBy;
-        this.inspectedObject = inspectedObject;
+        this.inspectedObjectName = inspectedObjectName;
         this.status = "In Progress";
     }
 
-    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, Inspectable inspectedObject) {
+    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, String inspectedObjectName) {
         this.id = ++maxId;
         this.inspectionDate = inspectionDate;
         this.inspectedBy = inspectedBy;
         this.status = status;
-        this.inspectedObject = inspectedObject;
+        this.inspectedObjectName = inspectedObjectName;
     }
 
-    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, String inspectionResult, Inspectable inspectedObject) {
+    public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, String inspectionResult, String inspectedObjectName) {
         this.id = ++maxId;
         this.inspectionDate = inspectionDate;
         this.inspectedBy = inspectedBy;
         this.status = status;
         this.inspectionResult = inspectionResult;
-        this.inspectedObject = inspectedObject;
+        this.inspectedObjectName = inspectedObjectName;
     }
 
     @Override
@@ -97,16 +97,9 @@ public class Inspection {
         this.inspectionResult = inspectionResult;
     }
 
-    public Inspectable getInspectedObject() {
-        return inspectedObject;
-    }
 
     public String getInspectedObjectName() {
-        return inspectedObject.getName();
-    }
-
-    public void setInspectedObject(Inspectable inspectedObject) {
-        this.inspectedObject = inspectedObject;
+        return this.inspectedObjectName;
     }
 
     public void finishInspection(String passResult) {

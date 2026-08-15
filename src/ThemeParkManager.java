@@ -1,14 +1,15 @@
-import park.Attraction;
-import park.Visitor;
+import park.*;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeSet;
 
 public class ThemeParkManager {
     private String name;
-    private Map<Integer, Attraction> attractionMap = new HashMap<>();
-    private Map<String, Visitor> visitorMap = new HashMap<>();
+    private HashMap<Integer, Attraction> attractionMap = new HashMap<>();
+    private HashMap<String, Visitor> visitorMap = new HashMap<>();
+    private HashMap<Integer, Employee> employeeMap = new HashMap<>();
+    private HashMap<Integer, Inspection> inspectionMap = new HashMap<>();
+    private HashMap<Integer, Facility> facilityMap = new HashMap<>();
 
     public ThemeParkManager(String name) {
         this.name = name;
@@ -27,6 +28,20 @@ public class ThemeParkManager {
         } else {
             System.out.println(visitorToAdd.getFullName() + " has returned to the theme park! [ID " + visitorToAdd.getId() + "]");
         }
+    }
+
+    public void addInspection(Inspection inspection) {
+        inspectionMap.put(inspection.getId(), inspection);
+    }
+
+    public void addEmployee(Employee employeeToAdd) {
+        employeeMap.put(employeeToAdd.getId(), employeeToAdd);
+        System.out.println(employeeToAdd.getFullName() + " has been registered as an employee. [ID " + employeeToAdd.getId() + "]");
+
+    }
+
+    public void addFacility(Facility facilityToAdd) {
+        facilityMap.put(facilityToAdd.getId(), facilityToAdd);
     }
 
     public void addVisitorsFromSet(TreeSet<Visitor> visitors) {
@@ -71,5 +86,25 @@ public class ThemeParkManager {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public HashMap<Integer,Attraction> getAttractionMap() {
+        return attractionMap;
+    }
+
+    public HashMap<String, Visitor> getVisitorMap() {
+        return visitorMap;
+    }
+
+    public HashMap<Integer, Employee> getEmployeeMap() {
+        return employeeMap;
+    }
+
+    public HashMap<Integer, Inspection> getInspectionMap() {
+        return inspectionMap;
+    }
+
+    public HashMap<Integer, Facility> getFacilityMap() {
+        return facilityMap;
     }
 }

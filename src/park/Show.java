@@ -22,6 +22,21 @@ public class Show extends Attraction {
         this.stageLocationName = stageLocationName;
         this.performers = performerList;
     }
+    /**
+     * This constructor allows an id to be set manually (via the super type's constructor), intended for restore from backup.
+     * @param id the ID of the backed up Ride
+     * @param name the name of the ride
+     * @param maxConcurrentVisitors the maximum number of concurrent visitors
+     * @param performerList the list of performer employees
+     * @param status the current status of the ride
+     * @param runBy the employee running the ride
+     * @param stageLocationName the name of the stage being performed on
+     */
+    public Show(int id, String name, int maxConcurrentVisitors, ArrayList<Employee> performerList, String status, String stageLocationName, Employee runBy) {
+        super(id, name, maxConcurrentVisitors, status, runBy);
+        this.stageLocationName = stageLocationName;
+        this.performers = performerList;
+    }
 
 
     @Override

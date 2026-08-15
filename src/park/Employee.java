@@ -23,6 +23,17 @@ public class Employee {
         this.jobTitle = jobTitle;
     }
 
+
+    public Employee (int id, String firstName, String lastName, int age, String phoneNumber, LocalDate startOfEmployment, String jobTitle) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.phoneNumber = phoneNumber;
+        this.startOfEmployment = startOfEmployment;
+        this.jobTitle = jobTitle;
+    }
+
     @Override
     public String toString() {
         return "Employee ID: " + this.id + "\n" +

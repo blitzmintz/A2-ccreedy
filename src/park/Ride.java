@@ -34,6 +34,20 @@ public class Ride extends Attraction implements Inspectable {
         this.underInspection = underInspection;
     }
 
+    /**
+     * This constructor allows an id to be set manually (via the super type's constructor), intended for restore from backup.
+     * @param id the ID of the backed up Ride
+     * @param name the name of the ride
+     * @param maxConcurrentVisitors the maximum number of concurrent visitors
+     * @param status the current status of the ride
+     * @param runBy the employee running the ride
+     * @param underInspection whether the ride is currently under inspection
+     */
+    public Ride(int id, String name, int maxConcurrentVisitors, String status, Employee runBy, boolean underInspection) {
+        super(id, name, maxConcurrentVisitors, status, runBy);
+        this.underInspection = underInspection;
+    }
+
     @Override
     public void addInspection(Inspection inspection) {
         listOfInspections.addLast(inspection);

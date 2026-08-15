@@ -3,6 +3,7 @@ import exceptions.MissingOperatorException;
 import exceptions.UnderInspectionException;
 import park.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -92,7 +93,7 @@ public class AssignmentTwo {
 
         // create an inspection that is in progress and start it
         System.out.println("*Creating new Inspection object and performing inspection on toilet.*");
-        Inspection toiletInspection = new Inspection(LocalDate.now(), inspector1, basicToilet);
+        Inspection toiletInspection = new Inspection(LocalDate.now(), inspector1, "West Toilet");
         basicToilet.performInspection(toiletInspection);
 
         // Show the most recently added (i.e. most recently started) inspection
@@ -114,7 +115,7 @@ public class AssignmentTwo {
         System.out.println(basicToilet.getListOfInspections().getLast() + "\n");
 
         // Now we will inspect a ride
-        Inspection rideInspection = new Inspection(LocalDate.now(), inspector2, crazyCoasterRide);
+        Inspection rideInspection = new Inspection(LocalDate.now(), inspector2, "Crazy Coaster 3000");
         crazyCoasterRide.performInspection(rideInspection);
 
         // Show the most recently added (i.e. most recently started) inspection
@@ -246,7 +247,7 @@ public class AssignmentTwo {
         logFlumeRide.addVisitorWaiting(sixthVisitor);
         logFlumeRide.addVisitorWaiting(fifthVisitor);
 
-        Inspection flumeRideInspection = new Inspection(LocalDate.now(), inspector1, logFlumeRide);
+        Inspection flumeRideInspection = new Inspection(LocalDate.now(), inspector1, "Log Flume");
         logFlumeRide.performInspection(flumeRideInspection);
 
         System.out.println("*Displaying visitors waiting and cycle count before cycle begins.*");
@@ -261,6 +262,7 @@ public class AssignmentTwo {
             System.out.println(e.getMessage());
         }
         System.out.println("*Ending the inspection as a pass to reopen the ride.*");
+        flumeRideInspection.finishInspection("Pass");
         logFlumeRide.endInspection("Pass");
         System.out.println("*Running a cycle again.*");
         try {
@@ -289,13 +291,24 @@ public class AssignmentTwo {
         ArrayList<Employee> performerList2 = new ArrayList<>();
         performerList2.add(performerEmployee3);
         performerList2.add(performerEmployee);
+        // adding employees to the theme park in preparation for backup
+        themePark.addEmployee(firstEmployee);
+        themePark.addEmployee(secondEmployee);
+        themePark.addEmployee(performerEmployee);
+        themePark.addEmployee(performerEmployee2);
+        themePark.addEmployee(performerEmployee3);
+        themePark.addEmployee(performerEmployee4);
 
         Ride teacups = new Ride("Teacups", 12, "Open", firstEmployee);
         Ride bumperCars = new Ride("Bumper Cars", 5, "Open", secondEmployee);
         Show animalShow = new Show("Animal Kingdom", 6,performerList1, "Open", performerEmployee4);
         Show clownShow = new Show("Clowning Around", 5,performerList2, "Open", performerEmployee3);
 
-        System.out.println("\n*Adding newly created attractions to Theme Park.*");
+        System.out.println("\n*Adding attractions to Theme Park.*");
+        themePark.addAttraction(fairyPerformance);
+        themePark.addAttraction(crazyCoasterRide);
+        themePark.addAttraction(wizardShow);
+        themePark.addAttraction(logFlumeRide);
         themePark.addAttraction(teacups);
         themePark.addAttraction(bumperCars);
         themePark.addAttraction(animalShow);
@@ -346,7 +359,25 @@ public class AssignmentTwo {
         System.out.println("\n*Printing visit report for specific attraction Animal Kingdom.*");
         System.out.println("Attraction Visits Report\n" + themePark.reportSpecificAttractionVisitCount(animalShow.getId()));
 
+
         System.out.println("PART 7 HERE \n" + "--------");
+
+        themePark.addInspection(toiletInspection);
+        themePark.addInspection(rideInspection);
+        themePark.addInspection(flumeRideInspection);
+        themePark.addFacility(basicToilet);
+
+        BackupManager backupManager = new BackupManager();
+        try {
+            backupManager.initiateParkBackup(themePark);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+
+
+
+
 
 
         //System.out.println("PART 8 HERE \n" + "--------");

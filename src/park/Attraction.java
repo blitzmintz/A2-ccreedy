@@ -103,6 +103,10 @@ public abstract class Attraction implements Cycleable {
         }
     }
 
+    public int getRunById() {
+        return runBy.getId();
+    }
+
     public void removeOperator() {
         this.runBy = null;
         //No operator means attraction must be closed
