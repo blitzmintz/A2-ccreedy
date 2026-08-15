@@ -1,4 +1,4 @@
-package models;
+package park;
 
 
 import exceptions.EmptyRideQueueException;
@@ -72,12 +72,14 @@ public class Ride extends Attraction implements Inspectable {
                 "Name: %s \n" +
                 "Maximum Visitors: %d \n" +
                 "Number of Visitors Waiting: %d \n" +
-                "Number of Visits: %d \n"
+                "Number of Visits: %d \n" +
+                "Status: %s"
                 , this.getId()
                 , this.getName()
                 , this.getMaxConcurrentVisitors()
                 , this.getVisitorsWaiting().size()
-                , this.getVisitorsVisited().size());
+                , this.getVisitorsVisited().size()
+                , this.getStatus());
     }
 
     public boolean isUnderInspection() {

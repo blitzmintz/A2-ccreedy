@@ -1,13 +1,11 @@
 import exceptions.EmptyRideQueueException;
 import exceptions.MissingOperatorException;
 import exceptions.UnderInspectionException;
-import models.*;
+import park.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Set;
 import java.util.TreeSet;
 
 public class AssignmentTwo {
@@ -16,13 +14,13 @@ public class AssignmentTwo {
         // PART 1 - VISITORS AND EMPLOYEES
         System.out.println("PART 1 HERE \n" + "--------");
         // Create a new tree set that contains visitors and is ordered by age, then by ID in case of 2 visitors having the same age
-        Set<Visitor> visitorSet = new TreeSet<>(Comparator.comparingInt(Visitor::getAge).thenComparing(Visitor::getId));
+        TreeSet<Visitor> visitorSet = new TreeSet<>(Comparator.comparingInt(Visitor::getAge).thenComparing(Visitor::getId));
 
         Visitor firstVisitor = new Visitor("Charlotte", "Creedy", 25, "0490419035");
         System.out.println(firstVisitor);
         visitorSet.add(firstVisitor);
 
-        Visitor secondVisitor = new Visitor("Mimi", "Kyu", 20, LocalDate.of(2026, 8, 20), "0466677788");
+        Visitor secondVisitor = new Visitor("Mimi", "Kyu", 20, "0466677788");
         System.out.println(secondVisitor);
         visitorSet.add(secondVisitor);
 
@@ -30,7 +28,7 @@ public class AssignmentTwo {
         System.out.println(visitorSet);
 
         // Create a new tree set that contains employees and is ordered by id
-        Set<Employee> employeeSet = new TreeSet<>(Comparator.comparingInt(Employee::getId));
+        TreeSet<Employee> employeeSet = new TreeSet<>(Comparator.comparingInt(Employee::getId));
 
         Employee firstEmployee = new Employee("Pika", "Chu", 100, "0433355566", LocalDate.of(2020, 1, 1), "Ride Attendant");
         System.out.println(firstEmployee);
@@ -137,8 +135,8 @@ public class AssignmentTwo {
         //PART 3 - WAITING LINE
         System.out.println("PART 3 HERE \n" + "--------");
         //I already have a few visitors from the above, so I will add them to my waiting queue, and create more to add
-        Visitor thirdVisitor = new Visitor("Brock", "Stub", 12, LocalDate.now(), "0400099911");
-        Visitor fourthVisitor = new Visitor("Amy", "Stub", 41, LocalDate.now(), "0400099911");
+        Visitor thirdVisitor = new Visitor("Brock", "Stub", 12, "0400099911");
+        Visitor fourthVisitor = new Visitor("Amy", "Stub", 41, "0400099912");
         visitorSet.add(thirdVisitor);
         visitorSet.add(fourthVisitor);
 
@@ -179,8 +177,10 @@ public class AssignmentTwo {
 
         // PART 5 - OPERATING ATTRACTIONS
         System.out.println("PART 5 HERE \n" + "--------");
-        Visitor fifthVisitor = new Visitor("Karly", "McManus", 23, LocalDate.now(), "0400777911");
-        Visitor sixthVisitor = new Visitor("Amy", "Starkly", 24, LocalDate.now(), "0400996611");
+        Visitor fifthVisitor = new Visitor("Karly", "McManus", 23, "0400777911");
+        Visitor sixthVisitor = new Visitor("Amy", "Starkly", 24, "0400996611");
+        visitorSet.add(fifthVisitor);
+        visitorSet.add(sixthVisitor);
 
         System.out.println("Creating a new show with no operator.");
         Show wizardShow = new Show("Wonderful Wizards", 5,performerList1, "Open", null);
@@ -281,6 +281,76 @@ public class AssignmentTwo {
         } catch (EmptyRideQueueException | MissingOperatorException | UnderInspectionException e) {
             System.out.println(e.getMessage());
         }
+
+        System.out.println("PART 6 HERE \n" + "--------");
+        // instantiate ThemeParkManager object
+        ThemeParkManager themePark = new ThemeParkManager("Wacky Theme Park");
+        // creating another performer list to be used for show
+        ArrayList<Employee> performerList2 = new ArrayList<>();
+        performerList2.add(performerEmployee3);
+        performerList2.add(performerEmployee);
+
+        Ride teacups = new Ride("Teacups", 12, "Open", firstEmployee);
+        Ride bumperCars = new Ride("Bumper Cars", 5, "Open", secondEmployee);
+        Show animalShow = new Show("Animal Kingdom", 6,performerList1, "Open", performerEmployee4);
+        Show clownShow = new Show("Clowning Around", 5,performerList2, "Open", performerEmployee3);
+
+        System.out.println("\n*Adding newly created attractions to Theme Park.*");
+        themePark.addAttraction(teacups);
+        themePark.addAttraction(bumperCars);
+        themePark.addAttraction(animalShow);
+        themePark.addAttraction(clownShow);
+
+        System.out.println("\n*Adding visitors to Theme Park from existing visitor set.*");
+        themePark.addVisitorsFromSet(visitorSet);
+        //create some more visitors
+        Visitor seventhVisitor = new Visitor("Reuben", "Pollak", 25, "0499911001");
+        Visitor eighthVisitor = new Visitor("Sara", "Thorn", 44, "0400099900");
+        themePark.addVisitor(seventhVisitor);
+        themePark.addVisitor(eighthVisitor);
+
+        System.out.println("\n*Retrieving attraction by ID.*");
+        System.out.println(themePark.getAttractionById(5).toString());
+
+        System.out.println("\n*Displaying distinct visitor count for the park.*");
+        System.out.println("Unique visitor count for this park: " + themePark.reportUniqueVisitorCount());
+
+        System.out.println("\n*Creating a repeat visitor and checking if unique visitor count increases (it should remain the same as previous line).*");
+        Visitor repeatVisitor = new Visitor("Sara", "Thorn", 44, "0400099900");
+        themePark.addVisitor(repeatVisitor);
+        System.out.println("Unique visitor count for this park: " + themePark.reportUniqueVisitorCount());
+
+
+        System.out.println("\n*Displaying each attraction's total visit count. Expecting no visits.*");
+        System.out.println("Attraction Visits Report\n" + themePark.reportAllAttractionVisitCount() );
+
+        teacups.addVisitorWaiting(sixthVisitor);
+        teacups.addVisitorWaiting(eighthVisitor);
+        clownShow.addVisitorWaiting(secondVisitor);
+        animalShow.addVisitorWaiting(thirdVisitor);
+        animalShow.addVisitorWaiting(fifthVisitor);
+        animalShow.addVisitorWaiting(fourthVisitor);
+
+        System.out.println("\n*Running cycles for 3 attractions.*");
+
+        teacups.runCycle();
+        animalShow.runCycle();
+        clownShow.runCycle();
+
+        System.out.println("\n*Displaying each attraction's total visit count. Expecting visit count to increase for 3 of 4 attractions.*");
+        System.out.println("Attraction Visits Report\n" + themePark.reportAllAttractionVisitCount() );
+
+        System.out.println("\n*Visitor 4 wants to see the Animal show again, which should increase visit count even though they've seen it before.*");
+        animalShow.addVisitorWaiting(fourthVisitor);
+        animalShow.runCycle();
+        System.out.println("\n*Printing visit report for specific attraction Animal Kingdom.*");
+        System.out.println("Attraction Visits Report\n" + themePark.reportSpecificAttractionVisitCount(animalShow.getId()));
+
+        System.out.println("PART 7 HERE \n" + "--------");
+
+
+        //System.out.println("PART 8 HERE \n" + "--------");
+
 
     }
 

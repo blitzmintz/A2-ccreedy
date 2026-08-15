@@ -1,6 +1,6 @@
-package models;
+package park;
 
-import java.time.LocalDate;
+import java.util.Objects;
 
 public class Visitor {
 
@@ -9,17 +9,9 @@ public class Visitor {
     private String firstName;
     private String lastName;
     private int age;
-    private LocalDate lastVisitDate;
     private String phoneNumber;
 
-    public Visitor (String firstName, String lastName, int age, LocalDate lastVisitDate, String phoneNumber) {
-        this.id = ++maxId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
-        this.lastVisitDate = lastVisitDate;
-        this.phoneNumber = phoneNumber;
-    }
+
     public Visitor (String firstName, String lastName, int age, String phoneNumber) {
         this.id = ++maxId;
         this.firstName = firstName;
@@ -40,20 +32,24 @@ public class Visitor {
         return "Visitor ID: " + this.id + "\n" +
                 "Name: " + this.firstName + " " + this.lastName + "\n" +
                 "Age: " + this.age + "\n" +
-                "Phone Number: " + this.phoneNumber + "\n" +
-                // the ternary operator is a shorthand way to evaluate a condition and produce a different result if it's true or false
-                // here I have used it to check if a last visit date exists, and if it does, I print it as a string
-                // if it doesn't exist, I print unknown
-                "Last Visit Date: " + (this.lastVisitDate != null ? this.lastVisitDate.toString() : "Unknown") + "\n"
+                "Phone Number: " + this.phoneNumber + "\n"
                 ;
     }
 
+    /**
+     * This method compares visitors by phone number. If it is different, the objects are not considered equal.
+     * This is for the purposes of the assignment, previous iteration had comparison by ID which is preferable but given there is no UI functionality to search/select, this makes more sense.
+     *
+     * @param o   the reference object with which to compare.
+     * @return true/false for object equivalency
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Visitor other = (Visitor) o;
-        return this.id == other.id;
+        //Of course, in real life, people can provide the same phone number - families especially
+        return this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) && this.phoneNumber.equals(other.phoneNumber);
     }
 
     public int getId() {
@@ -96,11 +92,5 @@ public class Visitor {
         return this.phoneNumber;
     }
 
-    public void setLastVisitDate(LocalDate lastVisitDate) {
-        this.lastVisitDate = lastVisitDate;
-    }
 
-    public LocalDate getLastVisitDate() {
-        return this.lastVisitDate;
-    }
 }

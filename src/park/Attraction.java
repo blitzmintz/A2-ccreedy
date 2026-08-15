@@ -1,4 +1,4 @@
-package models;
+package park;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -34,9 +34,41 @@ public abstract class Attraction implements Cycleable {
     }
 
     public Attraction(String name, int maxConcurrentVisitors, String status) {
+        this.id = ++maxId;
         this.name = name;
         this.maxConcurrentVisitors = maxConcurrentVisitors;
         this.status = validateStatus(status);
+    }
+
+    /**
+     * This constructor allows you to directly set the ID rather than auto-incrementing the maxID.
+     * This is intended to be used on restore from backup.
+     * @param id the ID of the backed up attraction
+     * @param name the name of the attraction
+     * @param maxConcurrentVisitors the maximum number of concurrent visitors for the attraction
+     * @param status the status of the attraction
+     * @param runBy who the attraction is run by
+     */
+    public Attraction (int id, String name, int maxConcurrentVisitors, String status, Employee runBy) {
+        this.id = id;
+        this.name = name;
+        this.maxConcurrentVisitors = maxConcurrentVisitors;
+        this.visitorsWaiting = new LinkedList<>();
+        this.visitorsVisited = new LinkedList<>();
+        this.status = validateStatus(status);
+        this.runBy = runBy;
+    }
+
+    /**
+     * This method compares two Attraction objects by ID.
+     * @param o   the reference object with which to compare.
+     * @return true/false for object equivalency
+     */
+    @Override
+    public boolean equals(Object o) { if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attraction other = (Attraction) o;
+        return this.id == other.id;
     }
 
     public int getId() {
@@ -156,7 +188,7 @@ public abstract class Attraction implements Cycleable {
     //I think later when I need to have concurrency i am going to have to refactor this
     public void addVisitorWaiting(Visitor visitorToAdd) {
         visitorsWaiting.addLast(visitorToAdd);
-        System.out.println("Visitor ID " + visitorToAdd.getId() + " added to attraction queue.");
+        System.out.println("Visitor ID " + visitorToAdd.getId() + " added to queue for attraction '" + getName() + "'.");
     }
 
     //having number to remove allows us to pass in the max concurrent visitors easily and loop through until we reach an empty list OR max visitors have been retrieved
@@ -168,7 +200,7 @@ public abstract class Attraction implements Cycleable {
             if (visitor != null) {
                 visitorsWaiting.removeFirst();
                 visitorsVisited.addLast(visitor);
-                System.out.println("Visitor ID " + visitor.getId() + " was removed from the queue and added to the visitor history list.");
+                System.out.println("Visitor ID " + visitor.getId() + " was removed from the queue and added to the visitor history list for attraction '" + getName() + "'");
             }
             else {
                 System.out.println("No more visitors waiting!");
@@ -187,4 +219,5 @@ public abstract class Attraction implements Cycleable {
     public void addCycle() {
         this.numberOfCycles = this.numberOfCycles + 1;
     }
+
 }

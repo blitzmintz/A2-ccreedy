@@ -1,4 +1,4 @@
-package models;
+package park;
 
 public class Toilet extends Facility implements Inspectable {
     private final String facilityType = "Toilet";
