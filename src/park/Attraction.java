@@ -76,6 +76,9 @@ public abstract class Attraction implements Cycleable, Runnable  {
         Attraction.totalCycles = totalCycles;
     }
 
+    /**
+     * This method increments the total cycles (for all attractions) whilst being locked to avoid concurrent updates.
+     */
     public void addTotalCycle() {
         lock.lock();
         totalCycles++;
@@ -221,17 +224,26 @@ public abstract class Attraction implements Cycleable, Runnable  {
         return validatedStatus;
     }
 
-
-    //I think later when I need to have concurrency i am going to have to refactor this
+    /**
+     * This method adds a visitor to an attractions waiting queue.
+     * @param visitorToAdd the visitor object to be added to the waiting queue
+     */
     public void addVisitorWaiting(Visitor visitorToAdd) {
         visitorsWaiting.addLast(visitorToAdd);
         System.out.println("Visitor ID " + visitorToAdd.getId() + " added to queue for attraction '" + getName() + "'.");
     }
 
     //having number to remove allows us to pass in the max concurrent visitors easily and loop through until we reach an empty list OR max visitors have been retrieved
+
+    /**
+     * This method removes visitors from the queue, up to the max concurrent visitors attribute. It compares the input variable to the maximum number of visitors and serves the lesser of those.
+     * It is called when a cycle is run.
+     * @param numberToRemove the number of visitors to remove
+     */
     public void removeNextVisitorsWaiting(int numberToRemove) {
         int i;
         int queueSizeAtStart = visitorsWaiting.size();
+        // the logic below keeps the loop going while the counter (i) is less than the smallest of the input number, the initial queue size, or the max visitors servable is reached
         for (i = 0; i < Math.min(numberToRemove, Math.min(maxConcurrentVisitors, queueSizeAtStart)); i++) {
             Visitor visitor = visitorsWaiting.peekFirst();
             if (visitor != null) {
@@ -253,6 +265,9 @@ public abstract class Attraction implements Cycleable, Runnable  {
         this.numberOfCycles = numberOfCycles;
     }
 
+    /**
+     * This method increments the cycle count for the attraction.
+     */
     public void addCycle() {
         this.numberOfCycles = this.numberOfCycles + 1;
     }

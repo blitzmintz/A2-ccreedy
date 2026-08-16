@@ -433,7 +433,7 @@ public class AssignmentTwo {
         Visitor visitor5 = new Visitor("Deedee", "Parkgoer", 32, "0459202947");
         Visitor visitor6 = new Visitor("Alita", "Parkgoer", 21, "0450185890");
 
-        System.out.println("\nTotal Cycles BEFORE park opens:" + Attraction.getTotalCycles());
+        System.out.println("\nTotal Cycles BEFORE park opens: " + Attraction.getTotalCycles());
 
         ride1.addVisitorWaiting(visitor1);
         ride1.addVisitorWaiting(visitor2);
@@ -449,7 +449,8 @@ public class AssignmentTwo {
 
 
         try {
-            //the park will close when there's no one waiting - for demonstration purposes!
+            //the park will close when there's no one waiting for anything - for demonstration purposes!
+            // the shows will still run cycles without people waiting, but when the last required cycle is run for a ride, the whole park closes.
             threadSafePark.openPark();
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());

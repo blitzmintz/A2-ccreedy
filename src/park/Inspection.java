@@ -119,6 +119,10 @@ public class Inspection {
         return this.inspectedObjectName;
     }
 
+    /**
+     * This method completes an inspection by setting the result to the passed in value, and the status to Complete.
+     * @param passResult the outcome of the inspection
+     */
     public void finishInspection(String passResult) {
         this.setInspectionResult(passResult);
         this.setStatus("Complete");

@@ -46,6 +46,10 @@ public abstract class Facility implements Inspectable {
         return Objects.hash(id);
     }
 
+    /**
+     * This method triggers an inspection on a facility.
+     * @param inspection the inspection being performed on the facility
+     */
     @Override
     public void performInspection(Inspection inspection) {
         this.underInspection = true;
@@ -69,6 +73,10 @@ public abstract class Facility implements Inspectable {
         return this.id;
     }
 
+    /**
+     * This method gets the last inspection in the list's result and returns it if available.
+     * @return the result of the last inspection in the list, or Unknown where no inspections exist
+     */
     public String getLastInspectionResult() {
         try {
             return listOfInspections.peekLast().getInspectionResult();
@@ -86,6 +94,10 @@ public abstract class Facility implements Inspectable {
         this.underInspection = underInspection;
     }
 
+    /**
+     * This method returns the name of the employee who last inspected the facility.
+     * @return either the full name of the employee who last inspected it, or Unknown
+     */
     @Override
     public String getLastInspectedByName() {
         try {
@@ -110,6 +122,11 @@ public abstract class Facility implements Inspectable {
         return this.status;
     }
 
+    /**
+     * This method validates the status of a facility by converting different options into a clean Open/Closed value
+     * @param status the status string value being validated
+     * @return the validated status value (Open or Closed)
+     */
     private String validateStatus(String status) {
         String validatedStatus = "";
         switch (status.trim().toUpperCase()) {

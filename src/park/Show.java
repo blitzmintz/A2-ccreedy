@@ -43,9 +43,13 @@ public class Show extends Attraction {
         this.performers = performerList;
     }
 
+    /**
+     * This method triggers cycles to run for shows, until the park is closed.
+     * This is because a show will run even if there is no one waiting. This results in many instances of a show being run before the park is closed.
+     */
     @Override
     public void run() {
-        while (!getVisitorsWaiting().isEmpty()) {
+        while (true) {
             this.runCycle();
             addTotalCycle();
         }
@@ -96,6 +100,13 @@ public class Show extends Attraction {
         this.performers = performerList;
     }
 
+    /**
+     * This method contains the logic for running a show. It serves visitors based on the requested number or max concurrent visitors, whichever is lesser.
+     * It calls methods to remove visitors from the waiting queue and place them in the history list, and then increment the number of cycles run.
+     * @throws MissingOperatorException this exception is thrown when there is no one operating the ride
+     * @throws AttractionClosedException this exception is thrown when the show is closed.
+     */
+
     @Override
     public void runCycle() throws MissingOperatorException, AttractionClosedException {
         if (getRunBy() == null) {
@@ -107,7 +118,7 @@ public class Show extends Attraction {
             int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
             removeNextVisitorsWaiting(visitorsToServe);
             addCycle();
-            System.out.println("Cycle completed");
+            System.out.println("Cycle completed for " + visitorsToServe + " visitors on attraction " + this.getName());
 
     }
 

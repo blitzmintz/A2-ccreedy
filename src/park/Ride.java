@@ -51,6 +51,11 @@ public class Ride extends Attraction implements Inspectable {
         this.underInspection = underInspection.equals("true");
     }
 
+    /**
+     * This method triggers the ride cycles to run while the queue waiting is not empty.
+     * This is managed by the Theme Park Manager (where attractions are submitted to the executor service).
+     * After a cycle is run, it increments the total cycles for the park at the super class level
+     */
     @Override
     public void run() {
         while (!getVisitorsWaiting().isEmpty()) {
@@ -59,12 +64,20 @@ public class Ride extends Attraction implements Inspectable {
         }
     }
 
+    /**
+     * This method adds an inspection object to the list of inspections managed by the Ride object
+     * @param inspection the inspection to be added
+     */
     @Override
     public void addInspection(Inspection inspection) {
         listOfInspections.addLast(inspection);
         System.out.println("Inspection " + inspection.getId() + " added to list.");
     }
 
+    /**
+     * This method triggers an inspection on a ride and adds it to the list of inspections. It closes the ride and prints a message to say that.
+     * @param inspection the inspection being performed on the ride
+     */
     @Override
     public void performInspection(Inspection inspection) {
         this.addInspection(inspection);
@@ -73,6 +86,10 @@ public class Ride extends Attraction implements Inspectable {
         System.out.println(getName() + " has been closed for an inspection.");
     }
 
+    /**
+     * This method ends the inspection. It marks the ride as not under inspection, and validates the result is a pass before re-opening the ride.
+     * @param passResult the result of the inspection
+     */
     @Override
     public void endInspection(String passResult) {
         setUnderInspection(false);
@@ -148,6 +165,13 @@ public class Ride extends Attraction implements Inspectable {
         this.underInspection = underInspection;
     }
 
+    /**
+     * This method contains the logic for running a cycle of a ride. It removes the visitors from the waiting queue by calling the removeNextVisitorsWaiting() method and then increments the cycle count by calling addCycle().
+     * @throws MissingOperatorException this exception is thrown if there is no employee running the ride
+     * @throws EmptyRideQueueException this exception is thrown if there is no one waiting for the ride
+     * @throws UnderInspectionException this exception is thrown if the ride is under inspection
+     * @throws AttractionClosedException this exception is thrown if the ride is closed
+     */
     @Override
     public void runCycle() throws MissingOperatorException, EmptyRideQueueException, UnderInspectionException, AttractionClosedException {
         if (getRunBy() == null) {
@@ -165,7 +189,7 @@ public class Ride extends Attraction implements Inspectable {
         int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
         removeNextVisitorsWaiting(visitorsToServe);
         addCycle();
-        System.out.println("Cycle completed");
+        System.out.println("Cycle completed for " + visitorsToServe + " visitors on attraction " + this.getName());
 
 
     }

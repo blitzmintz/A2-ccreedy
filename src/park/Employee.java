@@ -27,7 +27,17 @@ public class Employee {
         this.jobTitle = jobTitle;
     }
 
-
+    /**
+     * This constructor is intended for use in the restore from file functionality. It accepts an ID instead of auto-incrementing the max id.
+     * It converts strings to integers where required and also converts the start of employment string to a date.
+     * @param id the id of the Employee
+     * @param firstName the first name of the employee
+     * @param lastName the last name of the employee
+     * @param age the age of the employee
+     * @param phoneNumber the phone number of the employee
+     * @param startOfEmployment the start date of the employee's employment
+     * @param jobTitle the employee's job title
+     */
     public Employee (String id, String firstName, String lastName, String age, String phoneNumber, String startOfEmployment, String jobTitle) {
         this.id = Integer.parseInt(id);
         this.firstName = firstName;
