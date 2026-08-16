@@ -2,6 +2,7 @@ package park;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Employee {
 
@@ -53,6 +54,11 @@ public class Employee {
         if (o == null || getClass() != o.getClass()) return false;
         Employee other = (Employee) o;
         return this.id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public int getId() {

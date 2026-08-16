@@ -2,6 +2,7 @@ package park;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Inspection {
     private static int maxId = 0;
@@ -71,6 +72,10 @@ public class Inspection {
         if (o == null || getClass() != o.getClass()) return false;
         Inspection other = (Inspection) o;
         return this.getId() == other.getId();
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public int getId() {

@@ -2,6 +2,7 @@ package park;
 
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -45,7 +46,7 @@ public abstract class Attraction implements Cycleable, Runnable  {
     }
 
     /**
-     * This method is for use by the restore from file functionality. An id can be directly set as well as all other attributes.
+     * This constructor is for use by the restore from file functionality. An id can be directly set as well as all other attributes.
      * Sub class constructors convert the file data to the correct data type when calling this constructor.
      * @param id the ID of the attraction being restored
      * @param name the name of the attraction
@@ -65,25 +66,6 @@ public abstract class Attraction implements Cycleable, Runnable  {
         this.visitorsVisited = visitorsVisited;
         this.visitorsWaiting = visitorsWaiting;
         this.numberOfCycles = numberOfCycles;
-    }
-
-    /**
-     * This constructor allows you to directly set the ID rather than auto-incrementing the maxID.
-     * This is intended to be used on restore from backup.
-     * @param id the ID of the backed up attraction
-     * @param name the name of the attraction
-     * @param maxConcurrentVisitors the maximum number of concurrent visitors for the attraction
-     * @param status the status of the attraction
-     * @param runBy who the attraction is run by
-     */
-    public Attraction (int id, String name, int maxConcurrentVisitors, String status, Employee runBy) {
-        this.id = id;
-        this.name = name;
-        this.maxConcurrentVisitors = maxConcurrentVisitors;
-        this.visitorsWaiting = new LinkedList<>();
-        this.visitorsVisited = new LinkedList<>();
-        this.status = validateStatus(status);
-        this.runBy = runBy;
     }
 
     public static int getTotalCycles() {
@@ -110,6 +92,11 @@ public abstract class Attraction implements Cycleable, Runnable  {
         if (o == null || getClass() != o.getClass()) return false;
         Attraction other = (Attraction) o;
         return this.id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package park;
 
+import java.util.Objects;
+
 public class Visitor {
 
     private int id;
@@ -65,6 +67,11 @@ public class Visitor {
         Visitor other = (Visitor) o;
         //Of course, in real life, people can provide the same phone number - families especially
         return this.firstName.equals(other.firstName) && this.lastName.equals(other.lastName) && this.phoneNumber.equals(other.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, phoneNumber);
     }
 
     public int getId() {

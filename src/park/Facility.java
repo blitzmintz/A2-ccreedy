@@ -1,6 +1,7 @@
 package park;
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 public abstract class Facility implements Inspectable {
     private static int maxId = 0;
@@ -38,6 +39,11 @@ public abstract class Facility implements Inspectable {
         if (o == null || getClass() != o.getClass()) return false;
         Facility other = (Facility) o;
         return this.getId() == other.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

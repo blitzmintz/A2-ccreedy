@@ -104,10 +104,10 @@ public class Show extends Attraction {
         if (getStatus().equalsIgnoreCase("Closed")) {
             throw new AttractionClosedException("The show is closed, so it cannot start a cycle!");
         }
-        int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
-        removeNextVisitorsWaiting(visitorsToServe);
-        addCycle();
-        System.out.println("Cycle completed");
+            int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
+            removeNextVisitorsWaiting(visitorsToServe);
+            addCycle();
+            System.out.println("Cycle completed");
 
     }
 
