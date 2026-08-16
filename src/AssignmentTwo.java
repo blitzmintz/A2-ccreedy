@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.TreeSet;
 
@@ -398,8 +400,66 @@ public class AssignmentTwo {
         }
 
 
-        System.out.println("PART 8 HERE \n" + "--------");
+        System.out.println("\nPART 8 HERE \n" + "--------");
+        System.out.println("*Creating a new park with new attractions and new visitors to be run.");
+        ThemeParkManager threadSafePark = new ThemeParkManager("Thread Land");
 
+        Employee employee1 = new Employee("Charlotte", "Creedy", 24, "0411122222", LocalDate.now(), "Shift Manager/Performer");
+        Employee employee2 = new Employee("Bell", "Sprout", 12, "0411129999", LocalDate.now(), "Mascot/Performer");
+        Employee employee3 = new Employee("Reuben", "Pollak", 25, "0411188877", LocalDate.now(), "Performer");
+        Employee employee4 = new Employee("Al", "Cremie", 20, "0417776662", LocalDate.now(), "Ride Attendant");
+        Employee employee5 = new Employee("Frog", "Man", 45, "0400099443", LocalDate.now(), "Ride Attendant");
+        Employee employee6 = new Employee("Dragon", "Dragon", 100, "047512309", LocalDate.now(), "Dragon/Performer");
+        threadSafePark.addEmployee(employee1);
+        threadSafePark.addEmployee(employee2);
+        threadSafePark.addEmployee(employee3);
+        threadSafePark.addEmployee(employee4);
+        threadSafePark.addEmployee(employee5);
+        threadSafePark.addEmployee(employee6);
+
+        Ride ride1 = new Ride("Salad Spinner", 2, "Open", employee4);
+        Ride ride2 = new Ride("Exploding Contraption", 1, "Open", employee5);
+        Show show1 = new Show("Acrobat Show", 2, new ArrayList<Employee>(Arrays.asList(employee2, employee3)), "Open", employee2);
+        Show show2 = new Show("Fire Show", 2,  new ArrayList<Employee>(Arrays.asList(employee1, employee6)), "Open", employee6);
+        threadSafePark.addAttraction(ride1);
+        threadSafePark.addAttraction(ride2);
+        threadSafePark.addAttraction(show1);
+        threadSafePark.addAttraction(show2);
+
+        Visitor visitor1 = new Visitor("Jane", "Parkgoer", 20, "0439876091");
+        Visitor visitor2 = new Visitor("Mark", "Parkgoer", 23, "0428171029");
+        Visitor visitor3 = new Visitor("Flora", "Parkgoer", 54, "0438700098");
+        Visitor visitor4 = new Visitor("Jeff", "Parkgoer", 28, "0412938501");
+        Visitor visitor5 = new Visitor("Deedee", "Parkgoer", 32, "0459202947");
+        Visitor visitor6 = new Visitor("Alita", "Parkgoer", 21, "0450185890");
+
+        System.out.println("\nTotal Cycles BEFORE park opens:" + Attraction.getTotalCycles());
+
+        ride1.addVisitorWaiting(visitor1);
+        ride1.addVisitorWaiting(visitor2);
+        ride2.addVisitorWaiting(visitor3);
+        ride2.addVisitorWaiting(visitor4);
+        show1.addVisitorWaiting(visitor4);
+        show1.addVisitorWaiting(visitor5);
+        show1.addVisitorWaiting(visitor6);
+        show2.addVisitorWaiting(visitor1);
+        show2.addVisitorWaiting(visitor2);
+        show2.addVisitorWaiting(visitor3);
+        ride2.addVisitorWaiting(visitor3); // she wants to go again!
+
+
+        try {
+            //the park will close when there's no one waiting - for demonstration purposes!
+            threadSafePark.openPark();
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+
+        if (threadSafePark.hasShutdown()) {
+            System.out.println("Total Cycles Run: " + Attraction.getTotalCycles());
+        }
+
+        System.out.println("*This is the end of my assignment demonstration! :)*");
 
     }
 

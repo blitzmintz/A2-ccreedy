@@ -2,8 +2,10 @@ package park;
 
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-public abstract class Attraction implements Cycleable {
+public abstract class Attraction implements Cycleable, Runnable  {
     private static int maxId = 0;
     private int id;
     private String name;
@@ -13,6 +15,8 @@ public abstract class Attraction implements Cycleable {
     private LinkedList<Visitor> visitorsWaiting = new LinkedList<>();
     private LinkedList<Visitor> visitorsVisited = new LinkedList<>();
     private int numberOfCycles = 0;
+    Lock lock = new ReentrantLock();
+    private static int totalCycles = 0;
 
     public Attraction (String name, int maxConcurrentVisitors) {
         this.id = ++maxId;
@@ -82,6 +86,20 @@ public abstract class Attraction implements Cycleable {
         this.runBy = runBy;
     }
 
+    public static int getTotalCycles() {
+        return totalCycles;
+    }
+
+    public static void setTotalCycles(int totalCycles) {
+        Attraction.totalCycles = totalCycles;
+    }
+
+    public void addTotalCycle() {
+        lock.lock();
+        totalCycles++;
+        lock.unlock();
+    }
+
     /**
      * This method compares two Attraction objects by ID.
      * @param o   the reference object with which to compare.
@@ -92,6 +110,11 @@ public abstract class Attraction implements Cycleable {
         if (o == null || getClass() != o.getClass()) return false;
         Attraction other = (Attraction) o;
         return this.id == other.id;
+    }
+
+    @Override
+    public void run() {
+
     }
 
     public int getId() {
@@ -246,5 +269,6 @@ public abstract class Attraction implements Cycleable {
     public void addCycle() {
         this.numberOfCycles = this.numberOfCycles + 1;
     }
+
 
 }

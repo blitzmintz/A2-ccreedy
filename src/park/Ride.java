@@ -1,6 +1,7 @@
 package park;
 
 
+import exceptions.AttractionClosedException;
 import exceptions.EmptyRideQueueException;
 import exceptions.MissingOperatorException;
 import exceptions.UnderInspectionException;
@@ -48,6 +49,14 @@ public class Ride extends Attraction implements Inspectable {
     public Ride(String id, String name, String status, Employee runBy, String maxConcurrentVisitors, LinkedList<Visitor> visitorsWaiting, LinkedList<Visitor> visitorHistory, String numberOfCycles, String underInspection, LinkedList<Inspection> listOfInspections) {
         super(Integer.parseInt(id), name, status, runBy, Integer.parseInt(maxConcurrentVisitors), visitorsWaiting, visitorHistory, Integer.parseInt(numberOfCycles));
         this.underInspection = underInspection.equals("true");
+    }
+
+    @Override
+    public void run() {
+        while (!getVisitorsWaiting().isEmpty()) {
+            this.runCycle();
+            addTotalCycle();
+        }
     }
 
     @Override
@@ -140,7 +149,7 @@ public class Ride extends Attraction implements Inspectable {
     }
 
     @Override
-    public void runCycle() throws MissingOperatorException, EmptyRideQueueException, UnderInspectionException {
+    public void runCycle() throws MissingOperatorException, EmptyRideQueueException, UnderInspectionException, AttractionClosedException {
         if (getRunBy() == null) {
             throw new MissingOperatorException("The Ride does not have an operator present, so it cannot start a cycle!");
         }
@@ -150,9 +159,15 @@ public class Ride extends Attraction implements Inspectable {
         if (isUnderInspection()) {
             throw new UnderInspectionException("The ride is under inspection, so it cannot start a cycle!");
         }
+        if (getStatus().equalsIgnoreCase("Closed")) {
+            throw new AttractionClosedException("The ride is closed, so it cannot start a cycle!");
+        }
         int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
         removeNextVisitorsWaiting(visitorsToServe);
         addCycle();
+        System.out.println("Cycle completed");
+
+
     }
 
 

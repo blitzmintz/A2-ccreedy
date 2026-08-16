@@ -1,5 +1,6 @@
 package park;
 
+import exceptions.AttractionClosedException;
 import exceptions.MissingOperatorException;
 
 import java.util.ArrayList;
@@ -42,6 +43,13 @@ public class Show extends Attraction {
         this.performers = performerList;
     }
 
+    @Override
+    public void run() {
+        while (!getVisitorsWaiting().isEmpty()) {
+            this.runCycle();
+            addTotalCycle();
+        }
+    }
 
     @Override
     public String toString() {
@@ -89,13 +97,17 @@ public class Show extends Attraction {
     }
 
     @Override
-    public void runCycle() throws MissingOperatorException {
+    public void runCycle() throws MissingOperatorException, AttractionClosedException {
         if (getRunBy() == null) {
             throw new MissingOperatorException("The Show does not have an operator present, so it cannot start a cycle!");
+        }
+        if (getStatus().equalsIgnoreCase("Closed")) {
+            throw new AttractionClosedException("The show is closed, so it cannot start a cycle!");
         }
         int visitorsToServe = Math.min(getVisitorsWaiting().size(), getMaxConcurrentVisitors());
         removeNextVisitorsWaiting(visitorsToServe);
         addCycle();
+        System.out.println("Cycle completed");
 
     }
 

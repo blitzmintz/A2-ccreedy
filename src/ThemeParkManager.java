@@ -1,6 +1,9 @@
 import park.*;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ThemeParkManager {
     private String name;
@@ -9,15 +12,95 @@ public class ThemeParkManager {
     private HashMap<Integer, Employee> employeeMap = new HashMap<>();
     private HashMap<Integer, Inspection> inspectionMap = new HashMap<>();
     private HashMap<Integer, Facility> facilityMap = new HashMap<>();
+    private final ExecutorService executorService;
+    private boolean parkOpen;
+
+    public ThemeParkManager(String name, boolean parkOpen) {
+        this.name = name;
+        this.parkOpen = parkOpen;
+        // Using a cached thread pool becuase i dont know how many attractions will exist when this constructor is called
+        this.executorService = Executors.newCachedThreadPool();
+    }
 
     public ThemeParkManager(String name) {
         this.name = name;
+        this.parkOpen = false;
+        this.executorService = Executors.newCachedThreadPool();
     }
+
+    /**
+     * This method opens the park and submits all attractions in the attraction map to the executor service, which triggers their run() methods.
+     */
+    public void openPark() throws InterruptedException {
+        this.parkOpen = true;
+        System.out.println("\nPark is now open! Rides and shows will start serving visitors!");
+        for (Attraction attraction : attractionMap.values()) {
+            executorService.submit(attraction);
+        }
+
+        checkIfQueuesEmpty();
+        closePark();
+    }
+
+    /**
+     * This method checks if there are attractions in the park's attraction map that have non-empty queues.
+     * This is for the benefit of the demonstration
+     */
+    public void checkIfQueuesEmpty() {
+        while (true) {
+            boolean queueEmpty = true;
+            for (Attraction attraction : attractionMap.values()) {
+                if (!attraction.getVisitorsWaiting().isEmpty()) {
+                    queueEmpty = false;
+                    break;
+                }
+            } if (queueEmpty) {
+                break;
+            }
+        }
+    }
+
+    public boolean hasShutdown() {
+        return executorService.isShutdown();
+    }
+
+    public boolean isParkOpen() {
+        return parkOpen;
+    }
+
+    /**
+     * This method closes the park and sets all its attractions to Closed, then shuts off the executor service so no more cycles can be run.
+     */
+
+    public void closePark() throws InterruptedException {
+        this.parkOpen = false;
+        for (Attraction attraction : attractionMap.values()) {
+            attraction.setStatus("Closed");
+        }
+        System.out.println("Park shutdown initiated...");
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+                System.out.println("Too long to shut down tasks, shutting down forcibly");
+                executorService.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            //shut down the service if an exception is encountered
+            executorService.shutdownNow();
+            throw new InterruptedException(e.getMessage());
+
+        }
+        System.out.println("The theme park has been closed.");
+    }
+
 
     public void addAttraction(Attraction attractionToAdd) {
         // do something, this will be called by the main method
         attractionMap.put(attractionToAdd.getId(), attractionToAdd);
         System.out.println(attractionToAdd.getName() + " added to theme park attractions. [ID " + attractionToAdd.getId() + "]");
+        if (parkOpen) {
+            executorService.submit(attractionToAdd);
+        }
     }
 
     public void addVisitor(Visitor visitorToAdd) {
@@ -184,4 +267,5 @@ public class ThemeParkManager {
     public HashMap<Integer, Facility> getFacilityMap() {
         return facilityMap;
     }
+
 }
