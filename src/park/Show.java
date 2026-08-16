@@ -3,6 +3,7 @@ package park;
 import exceptions.MissingOperatorException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Show extends Attraction {
     private String stageLocationName;
@@ -30,10 +31,13 @@ public class Show extends Attraction {
      * @param performerList the list of performer employees
      * @param status the current status of the ride
      * @param runBy the employee running the ride
+     * @param visitorsWaiting the visitors in queue for the show
+     * @param visitorHistory the visitors that have visited the show
      * @param stageLocationName the name of the stage being performed on
      */
-    public Show(int id, String name, int maxConcurrentVisitors, ArrayList<Employee> performerList, String status, String stageLocationName, Employee runBy) {
-        super(id, name, maxConcurrentVisitors, status, runBy);
+
+    public Show(String id, String name, String status, Employee runBy, String maxConcurrentVisitors, LinkedList<Visitor> visitorsWaiting, LinkedList<Visitor> visitorHistory, String numberOfCycles, ArrayList<Employee> performerList, String stageLocationName) {
+        super(Integer.parseInt(id), name, status, runBy, Integer.parseInt(maxConcurrentVisitors), visitorsWaiting, visitorHistory, Integer.parseInt(numberOfCycles));
         this.stageLocationName = stageLocationName;
         this.performers = performerList;
     }

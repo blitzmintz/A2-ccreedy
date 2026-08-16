@@ -41,6 +41,29 @@ public abstract class Attraction implements Cycleable {
     }
 
     /**
+     * This method is for use by the restore from file functionality. An id can be directly set as well as all other attributes.
+     * Sub class constructors convert the file data to the correct data type when calling this constructor.
+     * @param id the ID of the attraction being restored
+     * @param name the name of the attraction
+     * @param status the status of the attraction
+     * @param runBy which employee the attraction is operated by
+     * @param maxConcurrentVisitors the max number of visitors that can be served at once
+     * @param visitorsWaiting the list of visitors in queue
+     * @param visitorsVisited the list of visitors that have been served
+     * @param numberOfCycles the number of run cycles the attraction has undergone
+     */
+    public Attraction(int id, String name, String status, Employee runBy, int maxConcurrentVisitors, LinkedList<Visitor> visitorsWaiting, LinkedList<Visitor> visitorsVisited,int numberOfCycles) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.runBy = runBy;
+        this.maxConcurrentVisitors = maxConcurrentVisitors;
+        this.visitorsVisited = visitorsVisited;
+        this.visitorsWaiting = visitorsWaiting;
+        this.numberOfCycles = numberOfCycles;
+    }
+
+    /**
      * This constructor allows you to directly set the ID rather than auto-incrementing the maxID.
      * This is intended to be used on restore from backup.
      * @param id the ID of the backed up attraction

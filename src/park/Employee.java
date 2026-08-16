@@ -1,8 +1,11 @@
 package park;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Employee {
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private int id;
     private static int maxId = 0;
@@ -24,13 +27,13 @@ public class Employee {
     }
 
 
-    public Employee (int id, String firstName, String lastName, int age, String phoneNumber, LocalDate startOfEmployment, String jobTitle) {
-        this.id = id;
+    public Employee (String id, String firstName, String lastName, String age, String phoneNumber, String startOfEmployment, String jobTitle) {
+        this.id = Integer.parseInt(id);
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
+        this.age = Integer.parseInt(age);
         this.phoneNumber = phoneNumber;
-        this.startOfEmployment = startOfEmployment;
+        this.startOfEmployment = LocalDate.parse(startOfEmployment, formatter);
         this.jobTitle = jobTitle;
     }
 

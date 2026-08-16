@@ -1,5 +1,7 @@
 package park;
 
+import java.util.LinkedList;
+
 public class Toilet extends Facility implements Inspectable {
     private final String facilityType = "Toilet";
     private boolean hasChildFacilities;
@@ -23,11 +25,25 @@ public class Toilet extends Facility implements Inspectable {
         this.hasDisabledFacilities = hasDisabledFacilities;
     }
 
-
     public Toilet(boolean underInspection, String name, boolean hasChildFacilities, boolean hasDisabledFacilities, String status) {
         super(underInspection, name, status);
         this.hasChildFacilities = hasChildFacilities;
         this.hasDisabledFacilities = hasDisabledFacilities;
+    }
+
+    /**
+     * This method is intended for use by the restore from file functionality as an ID can be passed directly, and boolean values are taken as strings then converted.
+     * @param id the ID of the toilet
+     * @param name the name of the toilet
+     * @param status the status of the toilet (open/closed)
+     * @param underInspection whether the toilet is under inspection
+     * @param hasChildFacilities whether the toilet has child facilities
+     * @param hasDisabledFacilities whether the toilet has disabled facilities
+     */
+    public Toilet(String id, String name, String status, String underInspection, LinkedList<Inspection> listOfInspections, String hasChildFacilities, String hasDisabledFacilities) {
+        super(id, name, status, underInspection, listOfInspections);
+        this.hasChildFacilities = hasChildFacilities.equalsIgnoreCase("true");
+        this.hasDisabledFacilities = hasDisabledFacilities.equalsIgnoreCase("true");
     }
 
     @Override

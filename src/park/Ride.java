@@ -42,10 +42,12 @@ public class Ride extends Attraction implements Inspectable {
      * @param status the current status of the ride
      * @param runBy the employee running the ride
      * @param underInspection whether the ride is currently under inspection
+     * @param visitorHistory the list of visitors that have visited the ride
+     * @param visitorsWaiting the list of visitors in queue
      */
-    public Ride(int id, String name, int maxConcurrentVisitors, String status, Employee runBy, boolean underInspection) {
-        super(id, name, maxConcurrentVisitors, status, runBy);
-        this.underInspection = underInspection;
+    public Ride(String id, String name, String status, Employee runBy, String maxConcurrentVisitors, LinkedList<Visitor> visitorsWaiting, LinkedList<Visitor> visitorHistory, String numberOfCycles, String underInspection, LinkedList<Inspection> listOfInspections) {
+        super(Integer.parseInt(id), name, status, runBy, Integer.parseInt(maxConcurrentVisitors), visitorsWaiting, visitorHistory, Integer.parseInt(numberOfCycles));
+        this.underInspection = underInspection.equals("true");
     }
 
     @Override

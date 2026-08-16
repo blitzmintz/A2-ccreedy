@@ -6,10 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Array;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class BackupManager {
     private static final String rideLine = "RIDE|{ID}|{NAME}|{STATUS}|{RUNBYID}|{MAXCONCVISITORS}|[{VISITORWAITING}]|[{VISITORHISTORY}]|{NUMBEROFCYCLES}|{UNDERINSPECTION}|[{LISTOFINSPECTIONS}]\n";
@@ -57,7 +54,7 @@ public class BackupManager {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public void initiateParkRestoreFromFile(File fileName) throws IOException, FileNotFoundException {
+    public ThemeParkManager initiateParkRestoreFromFile(File fileName) throws IOException, FileNotFoundException {
         System.out.println("Starting the restore");
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -153,6 +150,8 @@ public class BackupManager {
                     currentObjectBlockLines.add(objectLine);
                 }
             }
+            System.out.println("Your park has been successfully restored from backup!");
+            return themePark;
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("File Not found: " + e);
         } catch (IOException e) {
@@ -174,20 +173,64 @@ public class BackupManager {
     }
 
     private void processEmployeeBlock(List<String[]> employees, ThemeParkManager themePark) {
-
+        for (String[] attribute : employees) {
+            Employee employee = new Employee(attribute[0], attribute[1], attribute[2], attribute[3], attribute[4], attribute[5], attribute[6]);
+            themePark.addEmployee(employee);
+        }
     }
 
     private void processInspectionBlock(List<String[]> inspections, ThemeParkManager themePark) {
-
+        for (String[] attribute : inspections) {
+            Employee employee = themePark.getEmployeeById(attribute[2]);
+            Inspection inspection = new Inspection(attribute[0], attribute[1], employee ,attribute[3],attribute[4], attribute[5]);
+            themePark.addInspection(inspection);
+        }
     }
 
     private void processFacilitiesBlock(List<String[]> facilities, ThemeParkManager themePark) {
-
+        for (String[] attribute : facilities) {
+            if (attribute.length > 5) {
+                String listOfInspectionsRaw = attribute[4].substring(1, attribute[4].length() - 1);
+                List<String> listOfInspectionIds = Arrays.asList(listOfInspectionsRaw.split(","));
+                LinkedList<Inspection> fullList = themePark.getInspectionsById(listOfInspectionIds);
+                Toilet toilet = new Toilet(attribute[0], attribute[1], attribute[2], attribute[3], fullList, attribute[5], attribute[6]);
+                themePark.addFacility(toilet);
+            }
+        }
     }
-
     private void processAttractionsBlock(List<String[]> attractions, ThemeParkManager themePark) {
+        for (String[] attribute : attractions) {
+            String rawVisitorWaitingId = attribute[6].substring(1, attribute[6].length() - 1);
+            List<String> listOfVisitorWaitingIds = Arrays.asList(rawVisitorWaitingId.split(","));
+            LinkedList<Visitor> fullVisitorWaitingList = themePark.getVisitorsById(listOfVisitorWaitingIds);
 
+            String rawVisitoryHistoryId = attribute[7].substring(1, attribute[7].length() - 1);
+            List<String> listOfVisitoryHistoryIds = Arrays.asList(rawVisitoryHistoryId.split(","));
+            LinkedList<Visitor> fullVisitorHistoryList = themePark.getVisitorsById(listOfVisitoryHistoryIds);
 
+            Employee runBy = themePark.getEmployeeById(attribute[4]);
+
+            if (attribute[0].equals("RIDE")) {
+                String rawInspectionList = attribute[10].substring(1, attribute[10].length() - 1);
+                List<String> listOfInspectionIds = Arrays.asList(rawInspectionList.split(","));
+                LinkedList<Inspection> fullInspectionList = themePark.getInspectionsById(listOfInspectionIds);
+
+                Ride ride = new Ride(attribute[1], attribute[2], attribute[3], runBy,(attribute[5])
+                , fullVisitorWaitingList, fullVisitorHistoryList, attribute[8], attribute[9], fullInspectionList);
+
+                themePark.addAttraction(ride);
+
+            } else {
+                String rawPerfomerList = attribute[10].substring(1, attribute[10].length() - 1);
+                List<String> listOfPerformerIds = Arrays.asList(rawPerfomerList.split(","));
+                ArrayList<Employee> fullPerformerList = themePark.getEmployeesById(listOfPerformerIds);
+
+                Show show = new Show(attribute[1], attribute[2], attribute[3], runBy, attribute[5]
+                        , fullVisitorWaitingList, fullVisitorHistoryList, attribute[8], fullPerformerList,attribute[9]);
+
+                themePark.addAttraction(show);
+            }
+        }
     }
 
     private String generateVisitorText(HashMap<String,Visitor> visitors)  {
@@ -200,6 +243,7 @@ public class BackupManager {
                     .replace("{PHONENUMBER}", visitor.getPhoneNumber());
         }
         visitorBlock = visitorBlock + "***END-VISITORS***";
+        System.out.println("Visitor block processed successfully.");
         return visitorBlock;
     }
     
@@ -215,6 +259,7 @@ public class BackupManager {
                     .replace("{JOBTITLE}", employee.getJobTitle());
         }
         employeeBlock = employeeBlock + "***END-EMPLOYEES***";
+        System.out.println("Employee block processed successfully.");
         return employeeBlock;
     }
 
@@ -230,6 +275,7 @@ public class BackupManager {
                     .replace("{INSPECTEDOBJECTNAME}", inspection.getInspectedObjectName());
         }
         inspectionBlock = inspectionBlock + "***END-INSPECTIONS***";
+        System.out.println("Inspection block processed successfully.");
         return inspectionBlock;
     }
 
@@ -246,6 +292,8 @@ public class BackupManager {
                     .replace("{HASDISABLEDFACILITIES}", String.valueOf(((Toilet) facility).isHasDisabledFacilities()));
         }
         facilityBlock = facilityBlock + "***END-FACILITIES***";
+        System.out.println("Facility block processed successfully.");
+
         return facilityBlock;
     }
 
@@ -279,6 +327,8 @@ public class BackupManager {
             }
         }
         attractionBlock = attractionBlock + "***END-ATTRACTIONS***";
+        System.out.println("Attractions block processed successfully.");
+
         return attractionBlock;
     }
 

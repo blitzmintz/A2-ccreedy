@@ -1,6 +1,7 @@
 package park;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Inspection {
     private static int maxId = 0;
@@ -10,6 +11,8 @@ public class Inspection {
     private String status;
     private String inspectionResult;
     private String inspectedObjectName;
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public Inspection(LocalDate inspectionDate, Employee inspectedBy, String inspectedObjectName) {
         this.id = ++maxId;
@@ -30,6 +33,15 @@ public class Inspection {
     public Inspection(LocalDate inspectionDate, Employee inspectedBy, String status, String inspectionResult, String inspectedObjectName) {
         this.id = ++maxId;
         this.inspectionDate = inspectionDate;
+        this.inspectedBy = inspectedBy;
+        this.status = status;
+        this.inspectionResult = inspectionResult;
+        this.inspectedObjectName = inspectedObjectName;
+    }
+
+    public Inspection(String id, String inspectionDate, Employee inspectedBy, String status, String inspectionResult, String inspectedObjectName) {
+        this.id = Integer.parseInt(id);
+        this.inspectionDate = LocalDate.parse(inspectionDate, formatter);
         this.inspectedBy = inspectedBy;
         this.status = status;
         this.inspectionResult = inspectionResult;

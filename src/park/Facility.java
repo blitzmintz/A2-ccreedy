@@ -24,6 +24,14 @@ public abstract class Facility implements Inspectable {
         this.name = name;
     }
 
+    public Facility(String id, String name, String status, String underInspection, LinkedList<Inspection> listOfInspections) {
+        this.id = Integer.parseInt(id);
+        this.status = validateStatus(status);
+        this.underInspection = underInspection.equalsIgnoreCase("true");
+        this.name = name;
+        this.listOfInspections = listOfInspections;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

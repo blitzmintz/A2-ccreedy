@@ -3,6 +3,8 @@ import exceptions.MissingOperatorException;
 import exceptions.UnderInspectionException;
 import park.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -298,6 +300,8 @@ public class AssignmentTwo {
         themePark.addEmployee(performerEmployee2);
         themePark.addEmployee(performerEmployee3);
         themePark.addEmployee(performerEmployee4);
+        themePark.addEmployee(inspector1);
+        themePark.addEmployee(inspector2);
 
         Ride teacups = new Ride("Teacups", 12, "Open", firstEmployee);
         Ride bumperCars = new Ride("Bumper Cars", 5, "Open", secondEmployee);
@@ -367,6 +371,12 @@ public class AssignmentTwo {
         themePark.addInspection(flumeRideInspection);
         themePark.addFacility(basicToilet);
 
+        System.out.println("*Before we back up, lets see the attraction visit count and unique visitor count for our park:*");
+        System.out.println(themePark.reportAllAttractionVisitCount());
+        System.out.println("Unique Visitor Count: " + themePark.reportUniqueVisitorCount());
+        System.out.println("*See the visitors waiting for Crazy Coaster 3000 before back up:*");
+        System.out.println(crazyCoasterRide.getVisitorsWaitingAsString());
+
         BackupManager backupManager = new BackupManager();
         try {
             backupManager.initiateParkBackup(themePark);
@@ -374,13 +384,21 @@ public class AssignmentTwo {
             System.out.println(e);
         }
 
+        File file = new File("2026-08-16-backup.txt");
+        try {
+            ThemeParkManager restoredPark = backupManager.initiateParkRestoreFromFile(file);
+            System.out.println("*Park is restored, lets compare the attraction visit count and unique visitor counts.*");
+            System.out.println(restoredPark.reportAllAttractionVisitCount());
+            System.out.println("Unique Visitor Count: " + restoredPark.reportUniqueVisitorCount());
+            System.out.println("*See the visitors waiting for Crazy Coaster 3000 after back up:*");
+            System.out.println(restoredPark.getAttractionByName("Crazy Coaster 3000").getVisitorsWaitingAsString());
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
 
-
-
-
-
-        //System.out.println("PART 8 HERE \n" + "--------");
+        System.out.println("PART 8 HERE \n" + "--------");
 
 
     }

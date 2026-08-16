@@ -1,7 +1,6 @@
 import park.*;
 
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.*;
 
 public class ThemeParkManager {
     private String name;
@@ -47,7 +46,7 @@ public class ThemeParkManager {
     public void addVisitorsFromSet(TreeSet<Visitor> visitors) {
         for (Visitor visitor : visitors) {
             visitorMap.put(visitor.getPhoneNumber(), visitor);
-            System.out.println(visitor.getFullName() + " has entered the theme park for the first time. [ID " + visitor.getId() + "]");
+            System.out.println(visitor.getFullName() + " has entered the theme park. [ID " + visitor.getId() + "]");
         }
     }
 
@@ -60,6 +59,75 @@ public class ThemeParkManager {
             return null;
         }
     }
+
+    public Employee getEmployeeById(String id) {
+        if (id.isEmpty()) {
+            System.out.println("No ID passed in");
+            return null;
+        }
+        int convertedId = Integer.parseInt(id);
+        if (employeeMap.containsKey(convertedId)) {
+            System.out.println("Employee found for ID " + id);
+            return employeeMap.get(convertedId);
+        } else {
+            System.out.println("No employee found for ID " + id);
+            return null;
+        }
+    }
+
+    public ArrayList<Employee> getEmployeesById(List<String> employeeIds) {
+        ArrayList<Employee> employees = new ArrayList<>();
+        for (String id : employeeIds) {
+            if (id.isEmpty()) {
+                continue;
+            }
+            int convertedId = Integer.parseInt(id);
+            if (employeeMap.containsKey(convertedId)) {
+                System.out.println("Employee found for ID " + id);
+                employees.add(employeeMap.get(convertedId));
+            } else {
+                System.out.println("No employee found for ID " + id);
+            }
+        }
+        return employees;
+    }
+
+    public LinkedList<Inspection> getInspectionsById(List<String> inspectionIds) {
+        LinkedList<Inspection> inspections = new LinkedList<>();
+        for (String id : inspectionIds) {
+            if (id.isEmpty()) {
+                continue;
+            }
+            int convertedId = Integer.parseInt(id);
+            if (inspectionMap.containsKey(convertedId)) {
+                System.out.println("Inspection found for ID " + id);
+                inspections.add(inspectionMap.get(convertedId));
+            } else {
+                System.out.println("No inspection found for ID " + id);
+            }
+        }
+        return inspections;
+
+    }
+
+    public LinkedList<Visitor> getVisitorsById(List<String> visitorIds) {
+        LinkedList<Visitor> visitors = new LinkedList<>();
+        for (String id : visitorIds) {
+            if (id.isEmpty()) {
+                continue;
+            }
+            for (Visitor visitor : visitorMap.values()) {
+                if (visitor.getId() == Integer.parseInt(id)) {
+                    System.out.println("Visitor found for ID " + id);
+                    visitors.add(visitor);
+                } else {
+                    continue;
+                }
+            }
+        }
+        return visitors;
+    }
+
 
     public String reportAllAttractionVisitCount() {
         String reportOfCounts = "";
@@ -74,6 +142,15 @@ public class ThemeParkManager {
         String report = attractionToReport.getName() + " Visit Count: " + attractionToReport.getVisitorsVisited().size() + "\n";
         return report;
 
+    }
+
+    public Attraction getAttractionByName(String name) {
+        for (Attraction attraction : attractionMap.values()) {
+            if (attraction.getName().equalsIgnoreCase(name)) {
+                return attraction;
+            }
+        }
+        return null;
     }
 
     public int reportUniqueVisitorCount() {
