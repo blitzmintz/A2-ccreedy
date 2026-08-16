@@ -386,7 +386,8 @@ public class AssignmentTwo {
             System.out.println(e);
         }
 
-        File file = new File("2026-08-16-backup.txt");
+        String pathName = LocalDate.now() + "-backup.txt";
+        File file = new File(pathName);
         try {
             ThemeParkManager restoredPark = backupManager.initiateParkRestoreFromFile(file);
             System.out.println("*Park is restored, lets compare the attraction visit count and unique visitor counts.*");
