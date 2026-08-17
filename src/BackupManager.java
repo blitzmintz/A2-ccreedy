@@ -50,9 +50,9 @@ public class BackupManager {
     /**
      * This method restores the park from a backed up file. It tracks what lines to ingest as real data (done where insideObjectBlock = true)
      * and for header/footer lines it changes that state accordingly.
-     * @param fileName
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @param fileName the name of the file being read in to restore
+     * @throws IOException thrown where an issue is encountered while reading the file
+     * @throws FileNotFoundException thrown where the file cannot be found at the specified path
      */
     public ThemeParkManager initiateParkRestoreFromFile(File fileName) throws IOException, FileNotFoundException {
         System.out.println("Starting the restore");
